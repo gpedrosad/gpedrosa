@@ -2,18 +2,19 @@
 
 import React from "react";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import dynamic from "next/dynamic";
 import SobreMi from "./SobreMi";
-
 // Lazy de Feed (performance)
 const Feed = dynamic(() => import("./Feed"), { ssr: false });
 
 /* ────────────────────────────────────────────────────────────────────────────
    Pixel/CAPI helpers
    ──────────────────────────────────────────────────────────────────────────── */
-type FBQ = (event: "init" | "track" | "trackCustom" | string, ...args: unknown[]) => void;
+type FBQ = (event: "track" | "trackCustom" | string, ...args: unknown[]) => void;
 const getFbq = () => (globalThis as unknown as { fbq?: FBQ }).fbq;
+
+// ⬅️ Nuevo: leemos el Pixel ID en el cliente
 const PIXEL_ID_CLIENT = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID ?? "";
 
 const makeEventId = (prefix: string) =>
@@ -22,25 +23,7 @@ const makeEventId = (prefix: string) =>
 const FRONT_TEST_EVENT_CODE: string | undefined =
   process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE || undefined;
 
-// Envío inmediato con init si es necesario
-function trackNowPreferInit(
-  eventName: "ViewContent" | "Schedule" | string,
-  params: Record<string, unknown>,
-  eventId?: string
-): boolean {
-  const f = getFbq();
-  if (typeof f === "function") {
-    try {
-      if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
-      if (eventId) f("track", eventName, params, { eventID: eventId });
-      else f("track", eventName, params);
-      return true;
-    } catch {}
-  }
-  return false;
-}
-
-// Retry si fbq aún no está listo
+// Retraso + reintento para fbq (carga perezosa definida en layout.tsx)
 function trackWithRetry(
   eventName: "ViewContent" | "Schedule" | string,
   params: Record<string, unknown>,
@@ -56,12 +39,34 @@ function trackWithRetry(
       try {
         if (eventId) f("track", eventName, params, { eventID: eventId });
         else f("track", eventName, params);
-      } catch {}
+      } catch {
+        /* no-op */
+      }
       return;
     }
     if (attempts < retries) setTimeout(trySend, intervalMs);
   };
   trySend();
+}
+
+// ⬅️ Nuevo: intenta init + track inmediatamente; retorna true si pudo enviar ya
+function trackNowPreferInit(
+  eventName: "ViewContent" | "Schedule" | string,
+  params: Record<string, unknown>,
+  eventId?: string
+): boolean {
+  const f = getFbq();
+  if (typeof f === "function") {
+    try {
+      if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
+      if (eventId) f("track", eventName, params, { eventID: eventId });
+      else f("track", eventName, params);
+      return true;
+    } catch {
+      /* no-op */
+    }
+  }
+  return false;
 }
 
 async function sendScheduleToAPI(payload: {
@@ -85,7 +90,9 @@ async function sendScheduleToAPI(payload: {
         client_ts: Date.now(),
       }),
     });
-  } catch {}
+  } catch {
+    /* no-op */
+  }
 }
 
 function collectAttribution(base: Record<string, string> = {}) {
@@ -111,11 +118,13 @@ function collectAttribution(base: Record<string, string> = {}) {
     if (fbp) meta.fbp = fbp;
     meta.url = window.location.href;
     if (document.referrer) meta.referrer = document.referrer;
-  } catch {}
+  } catch {
+    /* no-op */
+  }
   return meta;
 }
 
-// Marca interacción humana (sólo para habilitar ciertas acciones)
+// Hook: marca interacción humana (sólo para habilitar métricas/UX; no cambia el copy)
 function useHumanInteraction(delayMs = 350) {
   const [interacted, setInteracted] = React.useState(false);
   React.useEffect(() => {
@@ -138,7 +147,7 @@ function useHumanInteraction(delayMs = 350) {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   Datos
+   Tipos y datos
    ──────────────────────────────────────────────────────────────────────────── */
 type Dias =
   | "Lunes"
@@ -164,12 +173,9 @@ interface ProfileData {
   }>;
 }
 
-/* ────────────────────────────────────────────────────────────────────────────
-   Componente
-   ──────────────────────────────────────────────────────────────────────────── */
-const Perfil: React.FC = () => {
+const Profile: React.FC = () => {
   const [mounted, setMounted] = React.useState(false);
-  const interacted = useHumanInteraction(400);
+  const interacted = useHumanInteraction(400); // habilita ciertas acciones tras interacción
 
   React.useEffect(() => setMounted(true), []);
 
@@ -177,6 +183,7 @@ const Perfil: React.FC = () => {
   const moneyLocale = "es-CL";
   const formatMoney = (n: number) => n.toLocaleString(moneyLocale);
 
+  // Contenido estático
   const profileData: ProfileData = {
     name: "Gonzalo Pedrosa",
     description:
@@ -206,14 +213,18 @@ const Perfil: React.FC = () => {
   const averageRating = 4.8;
   const NumerodeExperiencias = 281;
 
-  // Precalentar fbq tras montar (evita perder el click temprano)
+  // ⬅️ Nuevo: “precalentamos” el pixel un poco después del montaje
   React.useEffect(() => {
     if (!mounted || !PIXEL_ID_CLIENT) return;
     let tries = 0;
     const warm = () => {
       const f = getFbq();
       if (typeof f === "function") {
-        try { f("init", PIXEL_ID_CLIENT); } catch {}
+        try {
+          f("init", PIXEL_ID_CLIENT);
+          // opcional: un track ligero en dev para ver el helper
+          // if (process.env.NODE_ENV !== "production") f("track", "PageView");
+        } catch {}
         return;
       }
       if (tries++ < 20) setTimeout(warm, 150);
@@ -222,7 +233,7 @@ const Perfil: React.FC = () => {
     return () => clearTimeout(timer);
   }, [mounted]);
 
-  // ViewContent cuando ya hubo interacción
+  // ViewContent sólo tras interacción humana
   React.useEffect(() => {
     if (!mounted || !interacted) return;
     const eventId = makeEventId("vc-profile");
@@ -233,6 +244,7 @@ const Perfil: React.FC = () => {
       currency,
     };
     const t = window.setTimeout(() => {
+      // ⬅️ Nuevo: preferimos init+track inmediato; si no, retry
       const sent = trackNowPreferInit("ViewContent", params, eventId);
       if (!sent) trackWithRetry("ViewContent", params, eventId);
     }, 150);
@@ -250,23 +262,19 @@ const Perfil: React.FC = () => {
     );
   };
 
-  // CLICK CTA -> Schedule (Pixel + CAPI)
+  // CTA -> Schedule (Pixel + CAPI) tras click (siempre humano)
   const handleAgendarClick = (source: "inline" | "sticky" = "inline") => {
     const eventId = makeEventId("schedule-profile");
 
-    // Enviar al Pixel (con los mismos campos que VC para evitar bloqueos por schema)
     const pixelParams: Record<string, unknown> = {
       content_type: "service",
-      content_ids: [primaryService.id],
-      value: primaryService.priceCLP,
-      currency,
       source,
     };
 
+    // ⬅️ Nuevo: intentamos enviar YA; si no está listo, usamos retry
     const sent = trackNowPreferInit("Schedule", pixelParams, eventId);
     if (!sent) trackWithRetry("Schedule", pixelParams, eventId);
 
-    // Server-side (CAPI)
     const meta = collectAttribution({ page: "profile", source });
     void sendScheduleToAPI({
       event_id: eventId,
@@ -280,7 +288,7 @@ const Perfil: React.FC = () => {
     });
   };
 
-  // Carga perezosa de Feed: tras scroll
+  // Carga perezosa de Feed: tras scroll (por performance)
   const [showFeed, setShowFeed] = React.useState(false);
   React.useEffect(() => {
     if (!interacted) return;
@@ -327,7 +335,7 @@ const Perfil: React.FC = () => {
           </div>
         </div>
 
-        {/* Sección “Sobre mí” */}
+        {/* Sección “Sobre mí” (componente separado) */}
         <SobreMi content={profileData.description} />
 
         <div className="mt-12">
@@ -360,17 +368,37 @@ const Perfil: React.FC = () => {
 
                 <div className="flex flex-row justify-between items-center bg-gray-50 p-3 rounded-lg">
                   <div className="flex items-center">
-                    {/* duración */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <span className="font-medium">{service.duration} minutos</span>
                   </div>
 
                   <div className="flex items-center">
-                    {/* precio */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <span className="font-bold text-lg text-[#023047]">
                       {formatMoney(service.priceCLP)} {currency}
@@ -384,9 +412,19 @@ const Perfil: React.FC = () => {
                   className="flex w-full bg-[#023047] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#03506f] active:scale-95 transition-all duration-200 justify-center items-center space-x-2"
                   data-cta="agendar-inline"
                 >
-                  {/* ícono calendario */}
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   <span>Agendar sesión</span>
                 </button>
@@ -407,7 +445,6 @@ const Perfil: React.FC = () => {
         <p>© 2025 Gonzalo Pedrosa. Todos los derechos reservados.</p>
       </div>
 
-      {/* CTA sticky mobile */}
       {primaryService && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur">
           <div className="mx-auto max-w-xl flex items-center gap-3 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
@@ -423,8 +460,19 @@ const Perfil: React.FC = () => {
               className="ml-auto inline-flex items-center justify-center rounded-xl bg-[#023047] text-white px-5 py-3 font-semibold shadow-sm hover:bg-[#03506f] active:scale-95 transition"
               data-cta="agendar-sticky"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
               Agendar sesión
             </button>
@@ -435,4 +483,4 @@ const Perfil: React.FC = () => {
   );
 };
 
-export default Perfil;
+export default Profile;
