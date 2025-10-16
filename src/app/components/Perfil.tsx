@@ -10,17 +10,45 @@ import SobreMi from "./SobreMi";
 const Feed = dynamic(() => import("./Feed"), { ssr: false });
 
 /* ────────────────────────────────────────────────────────────────────────────
-   Pixel/CAPI helpers
+   Pixel helpers (solo FRONT)
    ──────────────────────────────────────────────────────────────────────────── */
 type FBQ = (event: "init" | "track" | "trackCustom" | string, ...args: unknown[]) => void;
 const getFbq = () => (globalThis as unknown as { fbq?: FBQ }).fbq;
 
+// Env (solo públicas)
 const PIXEL_ID_CLIENT = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID ?? "";
-const FRONT_TEST_EVENT_CODE: string | undefined =
-  process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE || undefined;
+// const FRONT_TEST_EVENT_CODE: string | undefined =
+//   process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE || undefined; // ← SOLO CAPI (comentado)
+
+// Útil para ver logs del flujo
+const DEBUG_PIXEL = true;
 
 const makeEventId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+function safeInitPixel() {
+  const g = globalThis as unknown as { __pixelInited?: boolean };
+  const f = getFbq();
+  if (typeof f !== "function") {
+    if (DEBUG_PIXEL) console.warn("[PIXEL] fbq aún no está disponible para init");
+    return false;
+  }
+  if (!PIXEL_ID_CLIENT) {
+    if (DEBUG_PIXEL) console.warn("[PIXEL] Falta NEXT_PUBLIC_FACEBOOK_PIXEL_ID");
+    return false;
+  }
+  if (!g.__pixelInited) {
+    try {
+      f("init", PIXEL_ID_CLIENT);
+      g.__pixelInited = true;
+      if (DEBUG_PIXEL) console.debug("[PIXEL] init OK", { PIXEL_ID_CLIENT });
+    } catch (e) {
+      console.error("[PIXEL] Error en init", e);
+      return false;
+    }
+  }
+  return true;
+}
 
 function trackWithRetry(
   eventName: "ViewContent" | "Schedule" | string,
@@ -30,26 +58,49 @@ function trackWithRetry(
   intervalMs = 160
 ) {
   let attempts = 0;
+  const startedAt = performance.now();
+
   const trySend = () => {
     attempts++;
     const f = getFbq();
+
+    if (DEBUG_PIXEL) {
+      console.groupCollapsed(`[PIXEL] trySend #${attempts} → ${eventName}`);
+      console.log("fbq typeof:", typeof f);
+      console.log("pixelId:", PIXEL_ID_CLIENT || "(vacío)");
+      console.table({ attempts, retries, intervalMs, eventName, eventId });
+      console.log("params:", params);
+      console.groupEnd();
+    }
+
     if (typeof f === "function") {
       try {
-        if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
+        safeInitPixel();
         if (eventId) f("track", eventName, params, { eventID: eventId });
         else f("track", eventName, params);
-        console.debug(`[PIXEL] ${eventName} sent (retry#${attempts})`, params);
+        if (DEBUG_PIXEL) {
+          console.debug(
+            `[PIXEL] ${eventName} ENVIADO (reintento #${attempts}, +${Math.round(
+              performance.now() - startedAt
+            )}ms)`,
+            { params, eventId }
+          );
+        }
       } catch (e) {
-        console.debug(`[PIXEL] ${eventName} error`, e);
+        console.error(`[PIXEL] ${eventName} ERROR (reintento #${attempts})`, e);
       }
       return;
     }
+
     if (attempts < retries) {
       setTimeout(trySend, intervalMs);
     } else {
-      console.debug(`[PIXEL] ${eventName} gave up after ${attempts} retries`);
+      console.warn(
+        `[PIXEL] ${eventName} cancelado tras ${attempts} intentos (fbq no disponible)`
+      );
     }
   };
+
   trySend();
 }
 
@@ -59,22 +110,39 @@ function trackNowPreferInit(
   eventId?: string
 ): boolean {
   const f = getFbq();
+
+  if (DEBUG_PIXEL) {
+    console.groupCollapsed(`[PIXEL] trackNow → ${eventName}`);
+    console.log("fbq typeof:", typeof f);
+    console.log("pixelId:", PIXEL_ID_CLIENT || "(vacío)");
+    console.log("eventId:", eventId);
+    console.log("params:", params);
+    console.groupEnd();
+  }
+
   if (typeof f === "function") {
     try {
-      if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
+      const inited = safeInitPixel();
+      if (!inited) {
+        if (DEBUG_PIXEL) console.warn("[PIXEL] No se pudo hacer init previo");
+      }
       if (eventId) f("track", eventName, params, { eventID: eventId });
       else f("track", eventName, params);
-      console.debug(`[PIXEL] ${eventName} sent (now)`, params);
+      if (DEBUG_PIXEL) console.debug(`[PIXEL] ${eventName} ENVIADO (now)`);
       return true;
     } catch (e) {
-      console.debug(`[PIXEL] ${eventName} error (now)`, e);
+      console.error(`[PIXEL] ${eventName} ERROR (now)`, e);
     }
   } else {
-    console.debug("[PIXEL] fbq not ready");
+    if (DEBUG_PIXEL) console.warn("[PIXEL] fbq no listo en el momento del track");
   }
   return false;
 }
 
+/* ────────────────────────────────────────────────────────────────────────────
+   BACKEND/CAPI DESHABILITADO (a pedido)
+   ──────────────────────────────────────────────────────────────────────────── */
+/*
 async function sendScheduleToAPI(payload: {
   event_id: string;
   value?: number;
@@ -101,6 +169,7 @@ async function sendScheduleToAPI(payload: {
     console.debug("[CAPI] Schedule error", e);
   }
 }
+*/
 
 function collectAttribution(base: Record<string, string> = {}) {
   const meta: Record<string, string> = { ...base };
@@ -226,8 +295,8 @@ const Profile: React.FC = () => {
       const f = getFbq();
       if (typeof f === "function") {
         try {
-          if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
-          console.debug("[PIXEL] warmed");
+          safeInitPixel();
+          if (DEBUG_PIXEL) console.debug("[PIXEL] warmed");
         } catch {}
         return;
       }
@@ -265,35 +334,59 @@ const Profile: React.FC = () => {
     );
   };
 
-  // CLICK CTA -> Schedule (Pixel + CAPI)
+  // CLICK CTA -> Schedule (SOLO PIXEL FRONT)
   const handleAgendarClick = (source: "inline" | "sticky" = "inline") => {
-    console.debug("[CTA] Agendar click", { source });
+    console.group("[CTA] Agendar click");
+    console.log("source:", source);
 
     const eventId = makeEventId("schedule-profile");
     const pixelParams: Record<string, unknown> = {
       content_type: "service",
-      content_ids: [primaryService.id],        // ⬅️ añadir ids
-      value: primaryService.priceCLP,          // ⬅️ añadir value
-      currency,                                // ⬅️ añadir currency
+      content_ids: [primaryService.id],
+      value: primaryService.priceCLP,
+      currency,
       source,
     };
 
-    // Browser Pixel
+    // Para ayudarte a depurar attribution y contexto de página
+    const meta = collectAttribution({ page: "profile", source });
+    console.log("attribution/meta:", meta);
+
+    // Estado actual del fbq antes de enviar
+    const f = getFbq();
+    console.table({
+      hasFbq: typeof f === "function",
+      hasPixelId: Boolean(PIXEL_ID_CLIENT),
+      eventId,
+    });
+
+    // 1) Browser Pixel
     const sent = trackNowPreferInit("Schedule", pixelParams, eventId);
     if (!sent) trackWithRetry("Schedule", pixelParams, eventId);
 
-    // Server (CAPI)
-    const meta = collectAttribution({ page: "profile", source });
-    void sendScheduleToAPI({
-      event_id: eventId,
-      value: primaryService.priceCLP,
-      currency,
-      content_ids: [primaryService.id],
-      content_type: "service",
-      source,
+    // 2) Backend/CAPI → DESHABILITADO
+    // void sendScheduleToAPI({
+    //   event_id: eventId,
+    //   value: primaryService.priceCLP,
+    //   currency,
+    //   content_ids: [primaryService.id],
+    //   content_type: "service",
+    //   source,
+    //   meta,
+    //   test_event_code: FRONT_TEST_EVENT_CODE, // CAPI únicamente
+    // });
+
+    // Exponer último intento en window para inspección manual
+    (window as any).__lastSchedule = {
+      ts: new Date().toISOString(),
+      eventId,
+      pixelParams,
       meta,
-      test_event_code: FRONT_TEST_EVENT_CODE,
-    });
+      fbqReady: typeof f === "function",
+      pixelId: PIXEL_ID_CLIENT,
+    };
+    console.log("window.__lastSchedule:", (window as any).__lastSchedule);
+    console.groupEnd();
   };
 
   // Carga perezosa de Feed: tras scroll
