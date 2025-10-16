@@ -44,7 +44,7 @@ const Feed: React.FC = () => {
       id: "13",
       created_at: "2025-04-10T10:45:00Z",
       body:
-        "Muy buen profesional, atento y disponible durante el proceso.",
+        "Muy buen profesional, atento y dispuesto a escuchar.",
       score: 5,
       author: "Yocelyn",
     },
@@ -91,7 +91,7 @@ const Feed: React.FC = () => {
       id: "7",
       created_at: "2025-03-10T14:00:00Z",
       body:
-        "Excelente profesional; el proceso me resultó de gran ayuda.",
+        "Excelente persona; todo me resultó de gran ayuda.",
       score: 5,
       author: "Daniela Quevedo",
     },
@@ -107,7 +107,7 @@ const Feed: React.FC = () => {
       id: "2",
       created_at: "2025-02-25T15:30:00Z",
       body:
-        "Noté una preocupación genuina por mi proceso y avances. Su guía fue clara y útil. Recomendado.",
+        "Noté una preocupación genuina por mi y mis avances. Su guía fue clara y útil. Recomendado.",
       score: 5,
       author: "Nicolás Gresve P.",
     },

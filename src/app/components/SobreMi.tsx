@@ -13,7 +13,7 @@ interface SobreMiProps {
 }
 
 const DEFAULT_PREFIX =
-  "Hola mi nombre es Gonzalo Pedrosa y tengo más de 8 años de experiencia con";
+  "Hola, soy Gonzalo Pedrosa. Acompaño a personas en procesos de organización personal y toma de decisiones.";
 
 const SobreMi: React.FC<SobreMiProps> = ({
   content,

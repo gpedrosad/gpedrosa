@@ -71,7 +71,6 @@ export default function RootLayout({
         <meta name="referrer" content="strict-origin-when-cross-origin" />
 
         {/* ─────────────────────────────────────────────────────────────
-           JSON-LD neutral (ProfessionalService) — consistente para todos
            ───────────────────────────────────────────────────────────── */}
         <Script id="ld-professional" type="application/ld+json">
           {JSON.stringify({
