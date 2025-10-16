@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Gonzalo Pedrosa",
     description:
-      "Espacio online de acompañamiento para reflexionar, tomar decisiones con claridad. Modalidad 100% online.",
+      "Modalidad 100% online.",
     openGraph: {
       title: "Gonzalo Pedrosa",
       description:
