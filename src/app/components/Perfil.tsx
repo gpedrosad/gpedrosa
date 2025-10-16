@@ -35,17 +35,20 @@ function trackWithRetry(
     const f = getFbq();
     if (typeof f === "function") {
       try {
-        // ❗️Sin init aquí. El stub del layout auto-inicializa si hace falta.
+        if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
         if (eventId) f("track", eventName, params, { eventID: eventId });
         else f("track", eventName, params);
-        console.debug(`[PIXEL] ${eventName} sent (retry #${attempts})`, params);
+        console.debug(`[PIXEL] ${eventName} sent (retry#${attempts})`, params);
       } catch (e) {
         console.debug(`[PIXEL] ${eventName} error`, e);
       }
       return;
     }
-    if (attempts < retries) setTimeout(trySend, intervalMs);
-    else console.debug(`[PIXEL] ${eventName} gave up after ${attempts} retries`);
+    if (attempts < retries) {
+      setTimeout(trySend, intervalMs);
+    } else {
+      console.debug(`[PIXEL] ${eventName} gave up after ${attempts} retries`);
+    }
   };
   trySend();
 }
@@ -58,7 +61,7 @@ function trackNowPreferInit(
   const f = getFbq();
   if (typeof f === "function") {
     try {
-      // ❗️Sin init aquí. El stub del layout auto-inicializa si hace falta.
+      if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
       if (eventId) f("track", eventName, params, { eventID: eventId });
       else f("track", eventName, params);
       console.debug(`[PIXEL] ${eventName} sent (now)`, params);
@@ -215,7 +218,26 @@ const Profile: React.FC = () => {
   const averageRating = 4.8;
   const NumerodeExperiencias = 281;
 
-  // ViewContent cuando ya hubo interacción (controlado y sin auto-init)
+  // Precalentar fbq tras montar (evita perder el click temprano)
+  React.useEffect(() => {
+    if (!mounted) return;
+    let tries = 0;
+    const warm = () => {
+      const f = getFbq();
+      if (typeof f === "function") {
+        try {
+          if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
+          console.debug("[PIXEL] warmed");
+        } catch {}
+        return;
+      }
+      if (tries++ < 20) setTimeout(warm, 150);
+    };
+    const timer = window.setTimeout(warm, 600);
+    return () => clearTimeout(timer);
+  }, [mounted]);
+
+  // ViewContent cuando ya hubo interacción
   React.useEffect(() => {
     if (!mounted || !interacted) return;
     const eventId = makeEventId("vc-profile");
@@ -250,9 +272,9 @@ const Profile: React.FC = () => {
     const eventId = makeEventId("schedule-profile");
     const pixelParams: Record<string, unknown> = {
       content_type: "service",
-      content_ids: [primaryService.id],
-      value: primaryService.priceCLP,
-      currency,
+      content_ids: [primaryService.id],        // ⬅️ añadir ids
+      value: primaryService.priceCLP,          // ⬅️ añadir value
+      currency,                                // ⬅️ añadir currency
       source,
     };
 
