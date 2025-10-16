@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import dynamic from "next/dynamic";
-import SobreMi from "./SobreMi"; 
+import SobreMi from "./SobreMi";
 // Lazy de Feed (performance)
 const Feed = dynamic(() => import("./Feed"), { ssr: false });
 
@@ -13,6 +13,9 @@ const Feed = dynamic(() => import("./Feed"), { ssr: false });
    ──────────────────────────────────────────────────────────────────────────── */
 type FBQ = (event: "track" | "trackCustom" | string, ...args: unknown[]) => void;
 const getFbq = () => (globalThis as unknown as { fbq?: FBQ }).fbq;
+
+// ⬅️ Nuevo: leemos el Pixel ID en el cliente
+const PIXEL_ID_CLIENT = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID ?? "";
 
 const makeEventId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -44,6 +47,26 @@ function trackWithRetry(
     if (attempts < retries) setTimeout(trySend, intervalMs);
   };
   trySend();
+}
+
+// ⬅️ Nuevo: intenta init + track inmediatamente; retorna true si pudo enviar ya
+function trackNowPreferInit(
+  eventName: "ViewContent" | "Schedule" | string,
+  params: Record<string, unknown>,
+  eventId?: string
+): boolean {
+  const f = getFbq();
+  if (typeof f === "function") {
+    try {
+      if (PIXEL_ID_CLIENT) f("init", PIXEL_ID_CLIENT);
+      if (eventId) f("track", eventName, params, { eventID: eventId });
+      else f("track", eventName, params);
+      return true;
+    } catch {
+      /* no-op */
+    }
+  }
+  return false;
 }
 
 async function sendScheduleToAPI(payload: {
@@ -190,6 +213,26 @@ const Profile: React.FC = () => {
   const averageRating = 4.8;
   const NumerodeExperiencias = 281;
 
+  // ⬅️ Nuevo: “precalentamos” el pixel un poco después del montaje
+  React.useEffect(() => {
+    if (!mounted || !PIXEL_ID_CLIENT) return;
+    let tries = 0;
+    const warm = () => {
+      const f = getFbq();
+      if (typeof f === "function") {
+        try {
+          f("init", PIXEL_ID_CLIENT);
+          // opcional: un track ligero en dev para ver el helper
+          // if (process.env.NODE_ENV !== "production") f("track", "PageView");
+        } catch {}
+        return;
+      }
+      if (tries++ < 20) setTimeout(warm, 150);
+    };
+    const timer = window.setTimeout(warm, 600);
+    return () => clearTimeout(timer);
+  }, [mounted]);
+
   // ViewContent sólo tras interacción humana
   React.useEffect(() => {
     if (!mounted || !interacted) return;
@@ -200,10 +243,11 @@ const Profile: React.FC = () => {
       value: primaryService.priceCLP,
       currency,
     };
-    const t = window.setTimeout(
-      () => trackWithRetry("ViewContent", params, eventId),
-      150
-    );
+    const t = window.setTimeout(() => {
+      // ⬅️ Nuevo: preferimos init+track inmediato; si no, retry
+      const sent = trackNowPreferInit("ViewContent", params, eventId);
+      if (!sent) trackWithRetry("ViewContent", params, eventId);
+    }, 150);
     return () => clearTimeout(t);
   }, [mounted, interacted, primaryService.id, primaryService.priceCLP, currency]);
 
@@ -226,7 +270,10 @@ const Profile: React.FC = () => {
       content_type: "service",
       source,
     };
-    trackWithRetry("Schedule", pixelParams, eventId);
+
+    // ⬅️ Nuevo: intentamos enviar YA; si no está listo, usamos retry
+    const sent = trackNowPreferInit("Schedule", pixelParams, eventId);
+    if (!sent) trackWithRetry("Schedule", pixelParams, eventId);
 
     const meta = collectAttribution({ page: "profile", source });
     void sendScheduleToAPI({
