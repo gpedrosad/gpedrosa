@@ -52,7 +52,7 @@ const Feed: React.FC = () => {
       id: "12",
       created_at: "2025-04-05T09:30:00Z",
       body:
-        "Gonzalo acompaña a mi hijo hace varios meses. Se ha sentido cómodo con las sesiones. Es responsable, puntual y comprometido; conversar con él genera confianza.",
+        "Gonzalo es responsable, puntual y comprometido; conversar con él genera confianza.",
       score: 5,
       author: "Claudia",
     },
