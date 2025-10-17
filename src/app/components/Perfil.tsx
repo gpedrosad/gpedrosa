@@ -10,6 +10,25 @@ import SobreMi from "./SobreMi";
 const Feed = dynamic(() => import("./Feed"), { ssr: false });
 
 /* ────────────────────────────────────────────────────────────────────────────
+   Tipos globales p/ depuración (sin any)
+   ──────────────────────────────────────────────────────────────────────────── */
+type LastSchedule = {
+  ts: string;
+  eventId: string;
+  pixelParams: Record<string, unknown>;
+  meta: Record<string, string>;
+  fbqReady: boolean;
+  pixelId: string;
+};
+
+declare global {
+  interface Window {
+    __lastSchedule?: LastSchedule;
+    __pixelInited?: boolean;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
    Pixel helpers (solo FRONT)
    ──────────────────────────────────────────────────────────────────────────── */
 type FBQ = (event: "init" | "track" | "trackCustom" | string, ...args: unknown[]) => void;
@@ -27,7 +46,6 @@ const makeEventId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
 function safeInitPixel() {
-  const g = globalThis as unknown as { __pixelInited?: boolean };
   const f = getFbq();
   if (typeof f !== "function") {
     if (DEBUG_PIXEL) console.warn("[PIXEL] fbq aún no está disponible para init");
@@ -37,10 +55,10 @@ function safeInitPixel() {
     if (DEBUG_PIXEL) console.warn("[PIXEL] Falta NEXT_PUBLIC_FACEBOOK_PIXEL_ID");
     return false;
   }
-  if (!g.__pixelInited) {
+  if (!window.__pixelInited) {
     try {
       f("init", PIXEL_ID_CLIENT);
-      g.__pixelInited = true;
+      window.__pixelInited = true;
       if (DEBUG_PIXEL) console.debug("[PIXEL] init OK", { PIXEL_ID_CLIENT });
     } catch (e) {
       console.error("[PIXEL] Error en init", e);
@@ -194,7 +212,9 @@ function collectAttribution(base: Record<string, string> = {}) {
     if (fbp) meta.fbp = fbp;
     meta.url = window.location.href;
     if (document.referrer) meta.referrer = document.referrer;
-  } catch {}
+  } catch {
+    // noop
+  }
   return meta;
 }
 
@@ -297,7 +317,9 @@ const Profile: React.FC = () => {
         try {
           safeInitPixel();
           if (DEBUG_PIXEL) console.debug("[PIXEL] warmed");
-        } catch {}
+        } catch {
+          // noop
+        }
         return;
       }
       if (tries++ < 20) setTimeout(warm, 150);
@@ -364,20 +386,10 @@ const Profile: React.FC = () => {
     const sent = trackNowPreferInit("Schedule", pixelParams, eventId);
     if (!sent) trackWithRetry("Schedule", pixelParams, eventId);
 
-    // 2) Backend/CAPI → DESHABILITADO
-    // void sendScheduleToAPI({
-    //   event_id: eventId,
-    //   value: primaryService.priceCLP,
-    //   currency,
-    //   content_ids: [primaryService.id],
-    //   content_type: "service",
-    //   source,
-    //   meta,
-    //   test_event_code: FRONT_TEST_EVENT_CODE, // CAPI únicamente
-    // });
+    // 2) Backend/CAPI → DESHABILITADO (comentado)
 
-    // Exponer último intento en window para inspección manual
-    (window as any).__lastSchedule = {
+    // Exponer último intento en window para inspección manual (sin any)
+    window.__lastSchedule = {
       ts: new Date().toISOString(),
       eventId,
       pixelParams,
@@ -385,7 +397,7 @@ const Profile: React.FC = () => {
       fbqReady: typeof f === "function",
       pixelId: PIXEL_ID_CLIENT,
     };
-    console.log("window.__lastSchedule:", (window as any).__lastSchedule);
+    console.log("window.__lastSchedule:", window.__lastSchedule);
     console.groupEnd();
   };
 
@@ -462,7 +474,7 @@ const Profile: React.FC = () => {
           {profileData.services.map((service) => (
             <div
               key={service.id}
-              className="p-6 bg-white border-l-4 border-[#023047] rounded-lg mb-6 w-full max-w-md shadow-lg hover:shadow-xl transition-all duration-200"
+              className="p-6 bg-white border-l-4 border-[#023047] rounded-lg mb-6 w-full max-w-md shadow-lg hover:shadow-xl transition-all duración-200"
             >
               <div className="flex flex-col space-y-4">
                 <h4 className="text-xl font-bold text-[#023047]">{service.name}</h4>
@@ -490,7 +502,7 @@ const Profile: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleAgendarClick("inline")}
-                  className="flex w-full bg-[#023047] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#03506f] active:scale-95 transition-all duration-200 justify-center items-center space-x-2"
+                  className="flex w-full bg-[#023047] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#03506f] active:scale-95 transition-all duración-200 justify-center items-center space-x-2"
                   data-cta="agendar-inline"
                 >
                   {/* ícono calendario */}
