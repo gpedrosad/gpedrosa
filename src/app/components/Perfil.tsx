@@ -32,40 +32,39 @@ declare global {
    Pixel helpers (solo FRONT)
    ──────────────────────────────────────────────────────────────────────────── */
 type FBQ = (event: "init" | "track" | "trackCustom" | string, ...args: unknown[]) => void;
-const getFbq = () => (globalThis as unknown as { fbq?: FBQ }).fbq;
+interface FBQWithState extends FBQ {
+  getState?: () => { pixels?: Array<{ id: string }> };
+}
+const getFbq = () => (globalThis as unknown as { fbq?: FBQWithState }).fbq;
 
 // Env (solo públicas)
 const PIXEL_ID_CLIENT = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID ?? "";
-// const FRONT_TEST_EVENT_CODE: string | undefined =
-//   process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE || undefined; // ← SOLO CAPI (comentado)
 
 // Útil para ver logs del flujo
 const DEBUG_PIXEL = true;
 
+// En debug, además de track('Schedule') enviamos trackCustom('Schedule')
+// para que el Helper lo liste seguro. Ponlo en false en prod.
+const SEND_BOTH = true;
+
 const makeEventId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
-function safeInitPixel() {
+/** No reinicializa si el Pixel ya está iniciado (usa fbq.getState) */
+function ensurePixelReady(): "ready" | "inited" | "no-fbq" | "no-id" | "error" {
   const f = getFbq();
-  if (typeof f !== "function") {
-    if (DEBUG_PIXEL) console.warn("[PIXEL] fbq aún no está disponible para init");
-    return false;
+  if (typeof f !== "function") return "no-fbq";
+  if (!PIXEL_ID_CLIENT) return "no-id";
+  try {
+    const hasId = !!f.getState?.().pixels?.some((p) => p.id === PIXEL_ID_CLIENT);
+    if (hasId) return "ready";
+    f("init", PIXEL_ID_CLIENT);
+    if (DEBUG_PIXEL) console.debug("[PIXEL] init (ensurePixelReady)", { PIXEL_ID_CLIENT });
+    return "inited";
+  } catch (e) {
+    console.error("[PIXEL] ensurePixelReady error", e);
+    return "error";
   }
-  if (!PIXEL_ID_CLIENT) {
-    if (DEBUG_PIXEL) console.warn("[PIXEL] Falta NEXT_PUBLIC_FACEBOOK_PIXEL_ID");
-    return false;
-  }
-  if (!window.__pixelInited) {
-    try {
-      f("init", PIXEL_ID_CLIENT);
-      window.__pixelInited = true;
-      if (DEBUG_PIXEL) console.debug("[PIXEL] init OK", { PIXEL_ID_CLIENT });
-    } catch (e) {
-      console.error("[PIXEL] Error en init", e);
-      return false;
-    }
-  }
-  return true;
 }
 
 function trackWithRetry(
@@ -93,15 +92,21 @@ function trackWithRetry(
 
     if (typeof f === "function") {
       try {
-        safeInitPixel();
+        ensurePixelReady();
         if (eventId) f("track", eventName, params, { eventID: eventId });
         else f("track", eventName, params);
+
+        if (SEND_BOTH && eventName === "Schedule") {
+          if (eventId) f("trackCustom", "Schedule", params, { eventID: eventId });
+          else f("trackCustom", "Schedule", params);
+        }
+
         if (DEBUG_PIXEL) {
           console.debug(
             `[PIXEL] ${eventName} ENVIADO (reintento #${attempts}, +${Math.round(
               performance.now() - startedAt
             )}ms)`,
-            { params, eventId }
+            { params, eventId, sentAsBoth: SEND_BOTH && eventName === "Schedule" }
           );
         }
       } catch (e) {
@@ -138,55 +143,40 @@ function trackNowPreferInit(
     console.groupEnd();
   }
 
-  if (typeof f === "function") {
-    try {
-      const inited = safeInitPixel();
-      if (!inited) {
-        if (DEBUG_PIXEL) console.warn("[PIXEL] No se pudo hacer init previo");
-      }
-      if (eventId) f("track", eventName, params, { eventID: eventId });
-      else f("track", eventName, params);
-      if (DEBUG_PIXEL) console.debug(`[PIXEL] ${eventName} ENVIADO (now)`);
-      return true;
-    } catch (e) {
-      console.error(`[PIXEL] ${eventName} ERROR (now)`, e);
+  if (typeof f !== "function") return false;
+
+  const st = ensurePixelReady();
+  if (DEBUG_PIXEL) console.debug("[PIXEL] ensurePixelReady:", st);
+
+  try {
+    if (eventId) f("track", eventName, params, { eventID: eventId });
+    else f("track", eventName, params);
+
+    if (SEND_BOTH && eventName === "Schedule") {
+      if (eventId) f("trackCustom", "Schedule", params, { eventID: eventId });
+      else f("trackCustom", "Schedule", params);
     }
-  } else {
-    if (DEBUG_PIXEL) console.warn("[PIXEL] fbq no listo en el momento del track");
+
+    console.info(`[PIXEL] ${eventName} ENVIADO`, {
+      sentAsBoth: SEND_BOTH && eventName === "Schedule",
+      params,
+      eventId,
+    });
+    return true;
+  } catch (e) {
+    console.error(`[PIXEL] ${eventName} ERROR (now)`, e);
+    return false;
   }
-  return false;
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
    BACKEND/CAPI DESHABILITADO (a pedido)
    ──────────────────────────────────────────────────────────────────────────── */
 /*
-async function sendScheduleToAPI(payload: {
-  event_id: string;
-  value?: number;
-  currency?: string;
-  content_ids?: string[];
-  content_type?: string;
-  source?: string;
-  meta?: Record<string, string>;
-  test_event_code?: string;
-}) {
-  try {
-    const res = await fetch("/api/meta/track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      keepalive: true,
-      body: JSON.stringify({
-        event_name: "Schedule",
-        ...payload,
-        client_ts: Date.now(),
-      }),
-    });
-    console.debug("[CAPI] Schedule sent", { ok: res.ok, status: res.status });
-  } catch (e) {
-    console.debug("[CAPI] Schedule error", e);
-  }
-}
+// const FRONT_TEST_EVENT_CODE: string | undefined =
+//   process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE || undefined;
+
+async function sendScheduleToAPI(...) { ... } // ← Comentado completamente
 */
 
 function collectAttribution(base: Record<string, string> = {}) {
@@ -315,7 +305,7 @@ const Profile: React.FC = () => {
       const f = getFbq();
       if (typeof f === "function") {
         try {
-          safeInitPixel();
+          ensurePixelReady();
           if (DEBUG_PIXEL) console.debug("[PIXEL] warmed");
         } catch {
           // noop
@@ -474,7 +464,7 @@ const Profile: React.FC = () => {
           {profileData.services.map((service) => (
             <div
               key={service.id}
-              className="p-6 bg-white border-l-4 border-[#023047] rounded-lg mb-6 w-full max-w-md shadow-lg hover:shadow-xl transition-all duración-200"
+              className="p-6 bg-white border-l-4 border-[#023047] rounded-lg mb-6 w-full max-w-md shadow-lg hover:shadow-xl transition-all duration-200"
             >
               <div className="flex flex-col space-y-4">
                 <h4 className="text-xl font-bold text-[#023047]">{service.name}</h4>
@@ -502,7 +492,8 @@ const Profile: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleAgendarClick("inline")}
-                  className="flex w-full bg-[#023047] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#03506f] active:scale-95 transition-all duración-200 justify-center items-center space-x-2"
+                  onPointerUp={() => queueMicrotask(() => handleAgendarClick("inline"))}
+                  className="flex w-full bg-[#023047] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#03506f] active:scale-95 transition-all duration-200 justify-center items-center space-x-2"
                   data-cta="agendar-inline"
                 >
                   {/* ícono calendario */}
@@ -541,6 +532,7 @@ const Profile: React.FC = () => {
             <button
               type="button"
               onClick={() => handleAgendarClick("sticky")}
+              onPointerUp={() => queueMicrotask(() => handleAgendarClick("sticky"))}
               className="ml-auto inline-flex items-center justify-center rounded-xl bg-[#023047] text-white px-5 py-3 font-semibold shadow-sm hover:bg-[#03506f] active:scale-95 transition"
               data-cta="agendar-sticky"
             >
