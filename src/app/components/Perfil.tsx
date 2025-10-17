@@ -40,12 +40,11 @@ const getFbq = () => (globalThis as unknown as { fbq?: FBQWithState }).fbq;
 // Env (solo públicas)
 const PIXEL_ID_CLIENT = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID ?? "";
 
-// Útil para ver logs del flujo
+// DEBUG
 const DEBUG_PIXEL = true;
-
-// En debug, además de track('Schedule') enviamos trackCustom('Schedule')
-// para que el Helper lo liste seguro. Ponlo en false en prod.
-const SEND_BOTH = true;
+// En dev mandamos también trackCustom para que el Helper lo liste seguro.
+// En prod queda solo track("Schedule").
+const SEND_BOTH = process.env.NODE_ENV !== "production";
 
 const makeEventId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -260,6 +259,7 @@ interface ProfileData {
 const Profile: React.FC = () => {
   const [mounted, setMounted] = React.useState(false);
   const interacted = useHumanInteraction(400);
+  const lastScheduleTsRef = React.useRef(0);
 
   React.useEffect(() => setMounted(true), []);
 
@@ -346,8 +346,17 @@ const Profile: React.FC = () => {
     );
   };
 
-  // CLICK CTA -> Schedule (SOLO PIXEL FRONT)
+  // CLICK CTA -> Schedule (SOLO PIXEL FRONT) con debounce
   const handleAgendarClick = (source: "inline" | "sticky" = "inline") => {
+    const now = Date.now();
+    if (now - lastScheduleTsRef.current < 600) {
+      console.debug("[CTA] Schedule ignorado por debounce", {
+        deltaMs: now - lastScheduleTsRef.current,
+      });
+      return;
+    }
+    lastScheduleTsRef.current = now;
+
     console.group("[CTA] Agendar click");
     console.log("source:", source);
 
@@ -492,7 +501,6 @@ const Profile: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleAgendarClick("inline")}
-                  onPointerUp={() => queueMicrotask(() => handleAgendarClick("inline"))}
                   className="flex w-full bg-[#023047] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#03506f] active:scale-95 transition-all duration-200 justify-center items-center space-x-2"
                   data-cta="agendar-inline"
                 >
@@ -532,7 +540,6 @@ const Profile: React.FC = () => {
             <button
               type="button"
               onClick={() => handleAgendarClick("sticky")}
-              onPointerUp={() => queueMicrotask(() => handleAgendarClick("sticky"))}
               className="ml-auto inline-flex items-center justify-center rounded-xl bg-[#023047] text-white px-5 py-3 font-semibold shadow-sm hover:bg-[#03506f] active:scale-95 transition"
               data-cta="agendar-sticky"
             >
