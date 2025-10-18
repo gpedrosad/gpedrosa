@@ -23,97 +23,74 @@ type LastSchedule = {
 
 declare global {
   interface Window {
+    fbq?: FBQ;
     __lastSchedule?: LastSchedule;
-    __pixelInited?: boolean;
   }
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   Pixel helpers (solo FRONT)
+   Pixel helpers (FRONT, usando el snippet oficial del layout)
    ──────────────────────────────────────────────────────────────────────────── */
 type FBQ = (event: "init" | "track" | "trackCustom" | string, ...args: unknown[]) => void;
-interface FBQWithState extends FBQ {
-  getState?: () => { pixels?: Array<{ id: string }> };
-}
-const getFbq = () => (globalThis as unknown as { fbq?: FBQWithState }).fbq;
+const getFbq = () => (globalThis as unknown as { fbq?: FBQ }).fbq;
 
-// Env (solo públicas)
 const PIXEL_ID_CLIENT = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID ?? "";
-
-// DEBUG
 const DEBUG_PIXEL = true;
-// En dev mandamos también trackCustom para que el Helper lo liste seguro.
-// En prod queda solo track("Schedule").
-const SEND_BOTH = process.env.NODE_ENV !== "production";
 
 const makeEventId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
-/** No reinicializa si el Pixel ya está iniciado (usa fbq.getState) */
-function ensurePixelReady(): "ready" | "inited" | "no-fbq" | "no-id" | "error" {
+/** Envia track si fbq está listo. No hace init (lo hace el layout). */
+function trackNow(
+  eventName: "ViewContent" | "Schedule" | string,
+  params: Record<string, unknown>,
+  eventId?: string
+): boolean {
   const f = getFbq();
-  if (typeof f !== "function") return "no-fbq";
-  if (!PIXEL_ID_CLIENT) return "no-id";
+  if (DEBUG_PIXEL) {
+    console.groupCollapsed(`[PIXEL] trackNow → ${eventName}`);
+    console.log("fbq typeof:", typeof f);
+    console.log("pixelId:", PIXEL_ID_CLIENT || "(vacío)");
+    console.log("eventId:", eventId);
+    console.log("params:", params);
+    console.groupEnd();
+  }
+  if (typeof f !== "function") return false;
   try {
-    const hasId = !!f.getState?.().pixels?.some((p) => p.id === PIXEL_ID_CLIENT);
-    if (hasId) return "ready";
-    f("init", PIXEL_ID_CLIENT);
-    if (DEBUG_PIXEL) console.debug("[PIXEL] init (ensurePixelReady)", { PIXEL_ID_CLIENT });
-    return "inited";
+    if (eventId) f("track", eventName, params, { eventID: eventId });
+    else f("track", eventName, params);
+    console.info(`[PIXEL] ${eventName} ENVIADO`, { sentAsBoth: false, params, eventId });
+    return true;
   } catch (e) {
-    console.error("[PIXEL] ensurePixelReady error", e);
-    return "error";
+    console.error(`[PIXEL] ${eventName} ERROR (now)`, e);
+    return false;
   }
 }
 
+/** Reintenta enviar el track si fbq aún no está listo. */
 function trackWithRetry(
   eventName: "ViewContent" | "Schedule" | string,
   params: Record<string, unknown>,
   eventId?: string,
-  retries = 25,
-  intervalMs = 160
+  retries = 20,
+  intervalMs = 150
 ) {
   let attempts = 0;
   const startedAt = performance.now();
 
   const trySend = () => {
     attempts++;
-    const f = getFbq();
-
-    if (DEBUG_PIXEL) {
-      console.groupCollapsed(`[PIXEL] trySend #${attempts} → ${eventName}`);
-      console.log("fbq typeof:", typeof f);
-      console.log("pixelId:", PIXEL_ID_CLIENT || "(vacío)");
-      console.table({ attempts, retries, intervalMs, eventName, eventId });
-      console.log("params:", params);
-      console.groupEnd();
-    }
-
-    if (typeof f === "function") {
-      try {
-        ensurePixelReady();
-        if (eventId) f("track", eventName, params, { eventID: eventId });
-        else f("track", eventName, params);
-
-        if (SEND_BOTH && eventName === "Schedule") {
-          if (eventId) f("trackCustom", "Schedule", params, { eventID: eventId });
-          else f("trackCustom", "Schedule", params);
-        }
-
-        if (DEBUG_PIXEL) {
-          console.debug(
-            `[PIXEL] ${eventName} ENVIADO (reintento #${attempts}, +${Math.round(
-              performance.now() - startedAt
-            )}ms)`,
-            { params, eventId, sentAsBoth: SEND_BOTH && eventName === "Schedule" }
-          );
-        }
-      } catch (e) {
-        console.error(`[PIXEL] ${eventName} ERROR (reintento #${attempts})`, e);
+    const ok = trackNow(eventName, params, eventId);
+    if (ok) {
+      if (DEBUG_PIXEL) {
+        console.debug(
+          `[PIXEL] ${eventName} ENVIADO (reintento #${attempts}, +${Math.round(
+            performance.now() - startedAt
+          )}ms)`
+        );
       }
       return;
     }
-
     if (attempts < retries) {
       setTimeout(trySend, intervalMs);
     } else {
@@ -125,58 +102,6 @@ function trackWithRetry(
 
   trySend();
 }
-
-function trackNowPreferInit(
-  eventName: "ViewContent" | "Schedule" | string,
-  params: Record<string, unknown>,
-  eventId?: string
-): boolean {
-  const f = getFbq();
-
-  if (DEBUG_PIXEL) {
-    console.groupCollapsed(`[PIXEL] trackNow → ${eventName}`);
-    console.log("fbq typeof:", typeof f);
-    console.log("pixelId:", PIXEL_ID_CLIENT || "(vacío)");
-    console.log("eventId:", eventId);
-    console.log("params:", params);
-    console.groupEnd();
-  }
-
-  if (typeof f !== "function") return false;
-
-  const st = ensurePixelReady();
-  if (DEBUG_PIXEL) console.debug("[PIXEL] ensurePixelReady:", st);
-
-  try {
-    if (eventId) f("track", eventName, params, { eventID: eventId });
-    else f("track", eventName, params);
-
-    if (SEND_BOTH && eventName === "Schedule") {
-      if (eventId) f("trackCustom", "Schedule", params, { eventID: eventId });
-      else f("trackCustom", "Schedule", params);
-    }
-
-    console.info(`[PIXEL] ${eventName} ENVIADO`, {
-      sentAsBoth: SEND_BOTH && eventName === "Schedule",
-      params,
-      eventId,
-    });
-    return true;
-  } catch (e) {
-    console.error(`[PIXEL] ${eventName} ERROR (now)`, e);
-    return false;
-  }
-}
-
-/* ────────────────────────────────────────────────────────────────────────────
-   BACKEND/CAPI DESHABILITADO (a pedido)
-   ──────────────────────────────────────────────────────────────────────────── */
-/*
-// const FRONT_TEST_EVENT_CODE: string | undefined =
-//   process.env.NEXT_PUBLIC_META_TEST_EVENT_CODE || undefined;
-
-async function sendScheduleToAPI(...) { ... } // ← Comentado completamente
-*/
 
 function collectAttribution(base: Record<string, string> = {}) {
   const meta: Record<string, string> = { ...base };
@@ -297,28 +222,7 @@ const Profile: React.FC = () => {
   const averageRating = 4.8;
   const NumerodeExperiencias = 281;
 
-  // Precalentar fbq tras montar (evita perder el click temprano)
-  React.useEffect(() => {
-    if (!mounted) return;
-    let tries = 0;
-    const warm = () => {
-      const f = getFbq();
-      if (typeof f === "function") {
-        try {
-          ensurePixelReady();
-          if (DEBUG_PIXEL) console.debug("[PIXEL] warmed");
-        } catch {
-          // noop
-        }
-        return;
-      }
-      if (tries++ < 20) setTimeout(warm, 150);
-    };
-    const timer = window.setTimeout(warm, 600);
-    return () => clearTimeout(timer);
-  }, [mounted]);
-
-  // ViewContent cuando ya hubo interacción
+  // ViewContent cuando ya hubo interacción (usamos el snippet oficial, sin init acá)
   React.useEffect(() => {
     if (!mounted || !interacted) return;
     const eventId = makeEventId("vc-profile");
@@ -329,10 +233,11 @@ const Profile: React.FC = () => {
       currency,
     };
     const t = window.setTimeout(() => {
-      const sent = trackNowPreferInit("ViewContent", params, eventId);
+      const sent = trackNow("ViewContent", params, eventId);
       if (!sent) trackWithRetry("ViewContent", params, eventId);
     }, 150);
     return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, interacted, primaryService.id, primaryService.priceCLP, currency]);
 
   const renderStars = (rating: number) => {
@@ -381,13 +286,11 @@ const Profile: React.FC = () => {
       eventId,
     });
 
-    // 1) Browser Pixel
-    const sent = trackNowPreferInit("Schedule", pixelParams, eventId);
+    // 1) Browser Pixel (normal)
+    const sent = trackNow("Schedule", pixelParams, eventId);
     if (!sent) trackWithRetry("Schedule", pixelParams, eventId);
 
-    // 2) Backend/CAPI → DESHABILITADO (comentado)
-
-    // Exponer último intento en window para inspección manual (sin any)
+    // Exponer último intento en window para inspección manual
     window.__lastSchedule = {
       ts: new Date().toISOString(),
       eventId,

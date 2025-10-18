@@ -22,8 +22,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://gpedrosa.cl"),
   title: "Gonzalo Pedrosa",
-  description:
-    "Acompañamiento Online",
+  description: "Acompañamiento Online",
   alternates: {
     canonical: "/",
     languages: { "es-CL": "/" },
@@ -32,8 +31,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://gpedrosa.cl/",
     title: "Gonzalo Pedrosa",
-    description:
-      "Acompañamiento Online",
+    description: "Acompañamiento Online",
     siteName: "Gonzalo Pedrosa",
     locale: "es_CL",
     images: [
@@ -48,8 +46,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Gonzalo Pedrosa | Agendamiento Online",
-    description:
-      "Agendamiento Online",
+    description: "Agendamiento Online",
     images: ["/yo.png"],
   },
   robots: { index: true, follow: true, "max-image-preview": "large" },
@@ -58,7 +55,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // ID del Pixel (si no existe, el stub no hace nada)
+  // ID del Pixel (si no existe, no renderizamos el snippet)
   const PIXEL_ID =
     process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID ??
     process.env.FACEBOOK_PIXEL_ID ??
@@ -70,8 +67,7 @@ export default function RootLayout({
         {/* Referrer reducido: menos fuga de parámetros a terceros */}
         <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-        {/* ─────────────────────────────────────────────────────────────
-           ───────────────────────────────────────────────────────────── */}
+        {/* ───────────────────────────────────────────────────────────── */}
         <Script id="ld-professional" type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -79,65 +75,52 @@ export default function RootLayout({
             areaServed: ["Online"],
             url: "https://gpedrosa.cl/",
             image: "https://gpedrosa.cl/yo.png",
-            description:
-              "Acompañamiento Online",
+            description: "Acompañamiento Online",
           })}
         </Script>
 
         {/* Favicons */}
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-        {/* ─────────────────────────────────────────────────────────────
-           Pixel de Meta con carga perezosa y sin PageView automático.
-           - No se carga la librería hasta que ALGUIEN llame fbq(...)
-           - En la primera llamada, se encola automáticamente fbq('init', PIXEL_ID)
-           - NO hay 'PageView' por defecto.
-           - Sin <noscript> (evita disparos en crawlers/headless)
-           Esto reduce señales a bots y mantiene consistencia de contenido.
-           ───────────────────────────────────────────────────────────── */}
-        <Script id="fbq-lazy" strategy="afterInteractive">
-          {`
-            (function (w, d, pid) {
-              if (!pid) return;
-              if (w.fbq) return;
-
-              var n = function() {
-                var args = Array.prototype.slice.call(arguments);
-                // Auto-init: si llega un 'track' antes de 'init', encolamos 'init' primero
-                if (!n.__inited && args[0] !== 'init') {
-                  n.queue.push(['init', pid]);
-                  n.__inited = true;
-                } else if (args[0] === 'init') {
-                  n.__inited = true;
-                }
-                n.queue.push(args);
-
-                // Carga perezosa de la librería al primer uso
-                if (!n.__loading) {
-                  n.__loading = true;
-                  var s = d.createElement('script');
-                  s.async = true;
-                  s.src = 'https://connect.facebook.net/en_US/fbevents.js';
-                  var x = d.getElementsByTagName('script')[0];
-                  x.parentNode.insertBefore(s, x);
-                }
-              };
-
-              n.queue = [];
-              n.version = '2.0';
-              n.loaded = true;
-              n.push = n; // compat
-
-              w.fbq = n;
-              if (!w._fbq) w._fbq = n;
-            })(window, document, '${PIXEL_ID}');
-          `}
-        </Script>
       </head>
 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
+
+        {/* ─────────────────────────────────────────────────────────────
+            Pixel de Meta (snippet oficial) + PageView automático
+            - Carga una sola vez con next/script (afterInteractive)
+            - Incluye <noscript> como fallback (solo si hay PIXEL_ID)
+           ───────────────────────────────────────────────────────────── */}
+        {PIXEL_ID && (
+          <>
+            <Script id="fb-pixel" strategy="afterInteractive">
+              {`
+                !function(f,b,e,v,n,t,s){
+                  if(f.fbq)return;
+                  n=f.fbq=function(){n.callMethod?
+                    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                  if(!f._fbq)f._fbq=n;
+                  n.push=n; n.loaded=!0; n.version='2.0'; n.queue=[];
+                  t=b.createElement(e); t.async=!0; t.src=v;
+                  s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s)
+                }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '${PIXEL_ID}');
+                fbq('track', 'PageView');
+              `}
+            </Script>
+
+            <noscript>
+              <img
+                height="1"
+                width="1"
+                style={{ display: "none" }}
+                src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+                alt=""
+              />
+            </noscript>
+          </>
+        )}
 
         {/* Analytics de Vercel (no bloqueante) */}
       </body>
