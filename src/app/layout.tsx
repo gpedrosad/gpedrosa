@@ -64,6 +64,7 @@ export default function RootLayout({
   return (
     <html lang="es-CL">
       <head>
+      <meta name="facebook-domain-verification" content="k3qfff423gv9n7mv2q6vomnrgi1hpn" />
         {/* Referrer reducido: menos fuga de parámetros a terceros */}
         <meta name="referrer" content="strict-origin-when-cross-origin" />
 
