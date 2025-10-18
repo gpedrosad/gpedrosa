@@ -5,6 +5,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import SobreMi from "./SobreMi";
+import Footer from "./Footer";
 
 // Lazy de Feed (performance)
 const Feed = dynamic(() => import("./Feed"), { ssr: false });
@@ -426,9 +427,8 @@ const Profile: React.FC = () => {
 
       <hr className="w-full border-gray-300 mt-12 mb-8" />
 
-      <div className="w-full bg-white p-6 text-center text-gray-600">
-        <p>© 2025 Gonzalo Pedrosa. Todos los derechos reservados.</p>
-      </div>
+      
+      <Footer />
 
       {/* CTA sticky mobile */}
       {primaryService && (
@@ -453,6 +453,7 @@ const Profile: React.FC = () => {
             </button>
           </div>
         </div>
+
       )}
     </div>
   );
