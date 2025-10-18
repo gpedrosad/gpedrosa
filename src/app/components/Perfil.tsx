@@ -1,3 +1,4 @@
+// src/app/components/Perfil.tsx
 "use client";
 
 import React from "react";
@@ -11,12 +12,17 @@ import Footer from "./Footer";
 const Feed = dynamic(() => import("./Feed"), { ssr: false });
 
 /* ────────────────────────────────────────────────────────────────────────────
-   Tipos globales p/ depuración (sin any)
+   Tipos y helpers globales (sin any)
    ──────────────────────────────────────────────────────────────────────────── */
-type LastSchedule = {
+type FBQ = (
+  event: "init" | "track" | "trackCustom" | string,
+  ...args: unknown[]
+) => void;
+
+type LastAgendamiento = {
   ts: string;
   eventId: string;
-  pixelParams: Record<string, unknown>;
+  eventParams: Record<string, unknown>;
   meta: Record<string, string>;
   fbqReady: boolean;
   pixelId: string;
@@ -25,14 +31,13 @@ type LastSchedule = {
 declare global {
   interface Window {
     fbq?: FBQ;
-    __lastSchedule?: LastSchedule;
+    __lastAgendamiento?: LastAgendamiento;
   }
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
    Pixel helpers (FRONT, usando el snippet oficial del layout)
    ──────────────────────────────────────────────────────────────────────────── */
-type FBQ = (event: "init" | "track" | "trackCustom" | string, ...args: unknown[]) => void;
 const getFbq = () => (globalThis as unknown as { fbq?: FBQ }).fbq;
 
 const PIXEL_ID_CLIENT = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID ?? "";
@@ -41,9 +46,9 @@ const DEBUG_PIXEL = true;
 const makeEventId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
-/** Envia track si fbq está listo. No hace init (lo hace el layout). */
+/** Envía fbq('track', ...) si fbq está listo (usado para ViewContent). */
 function trackNow(
-  eventName: "ViewContent" | "Schedule" | string,
+  eventName: "ViewContent",
   params: Record<string, unknown>,
   eventId?: string
 ): boolean {
@@ -60,7 +65,7 @@ function trackNow(
   try {
     if (eventId) f("track", eventName, params, { eventID: eventId });
     else f("track", eventName, params);
-    console.info(`[PIXEL] ${eventName} ENVIADO`, { sentAsBoth: false, params, eventId });
+    console.info(`[PIXEL] ${eventName} ENVIADO`, { params, eventId });
     return true;
   } catch (e) {
     console.error(`[PIXEL] ${eventName} ERROR (now)`, e);
@@ -68,9 +73,9 @@ function trackNow(
   }
 }
 
-/** Reintenta enviar el track si fbq aún no está listo. */
+/** Reintenta fbq('track', ...) si fbq aún no está listo (ViewContent). */
 function trackWithRetry(
-  eventName: "ViewContent" | "Schedule" | string,
+  eventName: "ViewContent",
   params: Record<string, unknown>,
   eventId?: string,
   retries = 20,
@@ -104,7 +109,71 @@ function trackWithRetry(
   trySend();
 }
 
-function collectAttribution(base: Record<string, string> = {}) {
+/** Envía fbq('trackCustom','Agendamiento', ...) si fbq está listo. */
+function trackAgendamientoNow(
+  params: Record<string, unknown>,
+  eventId?: string
+): boolean {
+  const f = getFbq();
+  const customEvent = "Agendamiento";
+  if (DEBUG_PIXEL) {
+    console.groupCollapsed(`[PIXEL] trackCustomNow → ${customEvent}`);
+    console.log("fbq typeof:", typeof f);
+    console.log("eventId:", eventId);
+    console.log("params:", params);
+    console.groupEnd();
+  }
+  if (typeof f !== "function") return false;
+  try {
+    if (eventId) f("trackCustom", customEvent, params, { eventID: eventId });
+    else f("trackCustom", customEvent, params);
+    console.info(`[PIXEL] ${customEvent} (custom) ENVIADO`, { params, eventId });
+    return true;
+  } catch (e) {
+    console.error(`[PIXEL] ${customEvent} (custom) ERROR (now)`, e);
+    return false;
+  }
+}
+
+/** Reintenta fbq('trackCustom','Agendamiento', ...) si fbq no está listo. */
+function trackAgendamientoWithRetry(
+  params: Record<string, unknown>,
+  eventId?: string,
+  retries = 20,
+  intervalMs = 150
+) {
+  let attempts = 0;
+  const startedAt = performance.now();
+
+  const trySend = () => {
+    attempts++;
+    const ok = trackAgendamientoNow(params, eventId);
+    if (ok) {
+      if (DEBUG_PIXEL) {
+        console.debug(
+          `[PIXEL] Agendamiento (custom) ENVIADO (reintento #${attempts}, +${Math.round(
+            performance.now() - startedAt
+          )}ms)`
+        );
+      }
+      return;
+    }
+    if (attempts < retries) {
+      setTimeout(trySend, intervalMs);
+    } else {
+      console.warn(
+        `[PIXEL] Agendamiento (custom) cancelado tras ${attempts} intentos (fbq no disponible)`
+      );
+    }
+  };
+
+  trySend();
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Attribution helpers (faltaba y rompía la build)
+   ──────────────────────────────────────────────────────────────────────────── */
+function collectAttribution(base: Record<string, string> = {}): Record<string, string> {
   const meta: Record<string, string> = { ...base };
   try {
     const usp = new URLSearchParams(window.location.search);
@@ -152,7 +221,7 @@ function makeWhatsUrl(message: string): string {
   return `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-/** Abre WhatsApp (nuevo tab; si está bloqueado, redirige misma pestaña) */
+/** Abre WhatsApp (nuevo tab; si bloquea popups, redirige misma pestaña) */
 function openWhatsApp(url: string) {
   try {
     const newWin = window.open(url, "_blank", "noopener,noreferrer");
@@ -216,7 +285,7 @@ interface ProfileData {
 const Profile: React.FC = () => {
   const [mounted, setMounted] = React.useState(false);
   const interacted = useHumanInteraction(400);
-  const lastScheduleTsRef = React.useRef(0);
+  const lastClickTsRef = React.useRef(0);
 
   React.useEffect(() => setMounted(true), []);
 
@@ -254,7 +323,7 @@ const Profile: React.FC = () => {
   const averageRating = 4.8;
   const NumerodeExperiencias = 281;
 
-  // ViewContent cuando ya hubo interacción (usamos el snippet oficial, sin init acá)
+  // ViewContent cuando ya hubo interacción (sin init aquí; lo hace el layout)
   React.useEffect(() => {
     if (!mounted || !interacted) return;
     const eventId = makeEventId("vc-profile");
@@ -283,22 +352,22 @@ const Profile: React.FC = () => {
     );
   };
 
-  // CLICK CTA -> Schedule (SOLO PIXEL FRONT) + abrir WhatsApp (debounce)
+  // CLICK CTA -> SOLO Custom "Agendamiento" + WhatsApp (debounce)
   const handleAgendarClick = (source: "inline" | "sticky" = "inline") => {
     const now = Date.now();
-    if (now - lastScheduleTsRef.current < 600) {
-      console.debug("[CTA] Schedule ignorado por debounce", {
-        deltaMs: now - lastScheduleTsRef.current,
+    if (now - lastClickTsRef.current < 600) {
+      console.debug("[CTA] Agendamiento ignorado por debounce", {
+        deltaMs: now - lastClickTsRef.current,
       });
       return;
     }
-    lastScheduleTsRef.current = now;
+    lastClickTsRef.current = now;
 
     console.group("[CTA] Agendar click");
     console.log("source:", source);
 
-    const eventId = makeEventId("schedule-profile");
-    const pixelParams: Record<string, unknown> = {
+    const eventId = makeEventId("agendamiento-profile");
+    const eventParams: Record<string, unknown> = {
       content_type: "service",
       content_ids: [primaryService.id],
       value: primaryService.priceCLP,
@@ -317,7 +386,7 @@ const Profile: React.FC = () => {
     );
     const waUrl = makeWhatsUrl(waMessage);
 
-    // Para ayudarte a depurar attribution y contexto de página
+    // Para depurar attribution y contexto de página
     const meta = collectAttribution({ page: "profile", source });
     console.log("attribution/meta:", meta);
 
@@ -329,23 +398,23 @@ const Profile: React.FC = () => {
       eventId,
     });
 
-    // 1) Browser Pixel (normal)
-    const sent = trackNow("Schedule", pixelParams, eventId);
-    if (!sent) trackWithRetry("Schedule", pixelParams, eventId);
+    // 1) Evento personalizado para campañas (único evento)
+    const sentCustom = trackAgendamientoNow(eventParams, eventId);
+    if (!sentCustom) trackAgendamientoWithRetry(eventParams, eventId);
 
-    // 2) Abrir WhatsApp inmediatamente tras el click (para evitar bloqueos)
+    // 2) Abrir WhatsApp inmediatamente tras el click
     openWhatsApp(waUrl);
 
     // 3) Exponer último intento en window para inspección manual
-    window.__lastSchedule = {
+    window.__lastAgendamiento = {
       ts: new Date().toISOString(),
       eventId,
-      pixelParams,
+      eventParams,
       meta,
       fbqReady: typeof f === "function",
       pixelId: PIXEL_ID_CLIENT,
     };
-    console.log("window.__lastSchedule:", window.__lastSchedule);
+    console.log("window.__lastAgendamiento:", window.__lastAgendamiento);
     console.groupEnd();
   };
 
@@ -383,7 +452,7 @@ const Profile: React.FC = () => {
           />
           <h2 className="text-2xl md:text-4xl font-bold">{profileData.name}</h2>
 
-          <div className="flex flex-col items-center mt-4 space-y-1">
+        <div className="flex flex-col items-center mt-4 space-y-1">
             <div className="flex items-center space-x-2">
               <p className="text-gray-800 text-2xl md:text-3xl font-semibold">
                 {averageRating.toFixed(1)}
@@ -430,16 +499,38 @@ const Profile: React.FC = () => {
                 <div className="flex flex-row justify-between items-center bg-gray-50 p-3 rounded-lg">
                   <div className="flex items-center">
                     {/* duración */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <span className="font-medium">{service.duration} minutos</span>
                   </div>
 
                   <div className="flex items-center">
                     {/* precio */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <span className="font-bold text-lg text-[#023047]">
                       {formatMoney(service.priceCLP)} {currency}
@@ -454,8 +545,19 @@ const Profile: React.FC = () => {
                   data-cta="agendar-inline"
                 >
                   {/* ícono calendario */}
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   <span>Agendar sesión (WhatsApp)</span>
                 </button>
@@ -490,8 +592,19 @@ const Profile: React.FC = () => {
               className="ml-auto inline-flex items-center justify-center rounded-xl bg-[#023047] text-white px-5 py-3 font-semibold shadow-sm hover:bg-[#03506f] active:scale-95 transition"
               data-cta="agendar-sticky"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
               Agendar por WhatsApp
             </button>
