@@ -133,6 +133,37 @@ function collectAttribution(base: Record<string, string> = {}) {
   return meta;
 }
 
+/* ────────────────────────────────────────────────────────────────────────────
+   WhatsApp helpers
+   ──────────────────────────────────────────────────────────────────────────── */
+const WHATS_NUMBER = "56968257817"; // sin '+' para wa.me
+
+function makeWhatsMessage(
+  serviceName: string,
+  priceStr: string,
+  currency: string,
+  source: "inline" | "sticky",
+  eventId: string
+): string {
+  return `Hola Gonzalo, quiero agendar: ${serviceName} (${priceStr} ${currency}). Vengo desde la web. Fuente: ${source}. ID:${eventId}`;
+}
+
+function makeWhatsUrl(message: string): string {
+  return `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
+/** Abre WhatsApp (nuevo tab; si está bloqueado, redirige misma pestaña) */
+function openWhatsApp(url: string) {
+  try {
+    const newWin = window.open(url, "_blank", "noopener,noreferrer");
+    if (!newWin) {
+      window.location.href = url;
+    }
+  } catch {
+    window.location.href = url;
+  }
+}
+
 // Marca interacción humana (sólo para habilitar ciertas acciones)
 function useHumanInteraction(delayMs = 350) {
   const [interacted, setInteracted] = React.useState(false);
@@ -252,7 +283,7 @@ const Profile: React.FC = () => {
     );
   };
 
-  // CLICK CTA -> Schedule (SOLO PIXEL FRONT) con debounce
+  // CLICK CTA -> Schedule (SOLO PIXEL FRONT) + abrir WhatsApp (debounce)
   const handleAgendarClick = (source: "inline" | "sticky" = "inline") => {
     const now = Date.now();
     if (now - lastScheduleTsRef.current < 600) {
@@ -275,6 +306,17 @@ const Profile: React.FC = () => {
       source,
     };
 
+    // WhatsApp: mensaje y URL
+    const priceStr = formatMoney(primaryService.priceCLP);
+    const waMessage = makeWhatsMessage(
+      primaryService.name,
+      priceStr,
+      currency,
+      source,
+      eventId
+    );
+    const waUrl = makeWhatsUrl(waMessage);
+
     // Para ayudarte a depurar attribution y contexto de página
     const meta = collectAttribution({ page: "profile", source });
     console.log("attribution/meta:", meta);
@@ -291,7 +333,10 @@ const Profile: React.FC = () => {
     const sent = trackNow("Schedule", pixelParams, eventId);
     if (!sent) trackWithRetry("Schedule", pixelParams, eventId);
 
-    // Exponer último intento en window para inspección manual
+    // 2) Abrir WhatsApp inmediatamente tras el click (para evitar bloqueos)
+    openWhatsApp(waUrl);
+
+    // 3) Exponer último intento en window para inspección manual
     window.__lastSchedule = {
       ts: new Date().toISOString(),
       eventId,
@@ -412,7 +457,7 @@ const Profile: React.FC = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span>Agendar sesión</span>
+                  <span>Agendar sesión (WhatsApp)</span>
                 </button>
               </div>
             </div>
@@ -427,7 +472,6 @@ const Profile: React.FC = () => {
 
       <hr className="w-full border-gray-300 mt-12 mb-8" />
 
-      
       <Footer />
 
       {/* CTA sticky mobile */}
@@ -449,11 +493,10 @@ const Profile: React.FC = () => {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              Agendar sesión
+              Agendar por WhatsApp
             </button>
           </div>
         </div>
-
       )}
     </div>
   );

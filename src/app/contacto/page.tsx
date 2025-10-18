@@ -1,4 +1,6 @@
+// src/app/contacto/page.tsx
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Contacto | Gonzalo Pedrosa",
@@ -10,10 +12,8 @@ export default function Contacto() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Contacto
-        </h1>
-        
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Contacto</h1>
+
         <div className="prose prose-lg max-w-none">
           <p className="text-gray-600 mb-8 text-xl">
             Estoy aquí para ayudarte. Puedes contactarme a través de los siguientes medios:
@@ -27,18 +27,14 @@ export default function Contacto() {
                 </svg>
                 Email
               </h2>
-              <p className="text-gray-700 mb-4">
-                Para consultas generales, puedes escribirme a:
-              </p>
-              <a 
+              <p className="text-gray-700 mb-4">Para consultas generales, puedes escribirme a:</p>
+              <a
                 href="mailto:gpedrosadom@gmail.com"
                 className="text-blue-600 hover:text-blue-800 font-medium text-lg"
               >
                 gpedrosadom@gmail.com
               </a>
-              <p className="text-gray-600 text-sm mt-2">
-                Te responderé en un plazo de 24-48 horas.
-              </p>
+              <p className="text-gray-600 text-sm mt-2">Te responderé en un plazo de 24-48 horas.</p>
             </div>
 
             <div className="bg-gray-50 p-6 rounded-lg">
@@ -48,10 +44,8 @@ export default function Contacto() {
                 </svg>
                 WhatsApp
               </h2>
-              <p className="text-gray-700 mb-4">
-                Para comunicación directa y agendamiento:
-              </p>
-              <a 
+              <p className="text-gray-700 mb-4">Para comunicación directa y agendamiento:</p>
+              <a
                 href="https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20quisiera%20agendar%20una%20sesi%C3%B3n"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -59,16 +53,12 @@ export default function Contacto() {
               >
                 +56968257817
               </a>
-              <p className="text-gray-600 text-sm mt-2">
-                Disponible de lunes a viernes, 9:00 - 18:00 hrs.
-              </p>
+              <p className="text-gray-600 text-sm mt-2">Disponible de lunes a viernes, 9:00 - 18:00 hrs.</p>
             </div>
           </div>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Horarios de atención
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Horarios de atención</h2>
             <div className="bg-blue-50 p-6 rounded-lg">
               <ul className="text-gray-700 space-y-2">
                 <li><strong>Lunes a Viernes:</strong> 9:00 - 18:00 hrs</li>
@@ -82,9 +72,7 @@ export default function Contacto() {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Información importante
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Información importante</h2>
             <div className="bg-yellow-50 p-6 rounded-lg">
               <p className="text-gray-700 mb-4">
                 <strong>Nota:</strong> Los servicios ofrecidos son de acompañamiento online y no constituyen servicios médicos, psicológicos o terapéuticos profesionales.
@@ -96,9 +84,7 @@ export default function Contacto() {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Tiempo de respuesta
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Tiempo de respuesta</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-gray-900 mb-2">Email</h3>
@@ -113,12 +99,9 @@ export default function Contacto() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-200">
-          <a 
-            href="/" 
-            className="text-blue-600 hover:text-blue-800 underline"
-          >
+          <Link href="/" className="text-blue-600 hover:text-blue-800 underline">
             ← Volver al inicio
-          </a>
+          </Link>
         </div>
       </div>
     </div>
