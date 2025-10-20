@@ -210,11 +210,9 @@ const WHATS_NUMBER = "56968257817"; // sin '+' para wa.me
 function makeWhatsMessage(
   serviceName: string,
   priceStr: string,
-  currency: string,
-  source: "inline" | "sticky",
-  eventId: string
+  currency: string  
 ): string {
-  return `Hola Gonzalo, quiero agendar: ${serviceName} (${priceStr} ${currency}). Vengo desde la web. Fuente: ${source}. ID:${eventId}`;
+  return `Hola Gonzalo, quiero agendar: ${serviceName} (${priceStr} ${currency}). Vengo desde la web.`;
 }
 
 function makeWhatsUrl(message: string): string {
@@ -380,9 +378,7 @@ const Profile: React.FC = () => {
     const waMessage = makeWhatsMessage(
       primaryService.name,
       priceStr,
-      currency,
-      source,
-      eventId
+      currency
     );
     const waUrl = makeWhatsUrl(waMessage);
 
