@@ -54,7 +54,7 @@ export function Testimonials() {
               transition={{ delay: index * 0.1 }}
               className="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow"
             >
-              <p className="text-gray-700 mb-6 leading-relaxed">"{comment.text}"</p>
+              <p className="text-gray-700 mb-6 leading-relaxed">&quot;{comment.text}&quot;</p>
               <div>
                 <div className="font-bold text-black">{comment.author}</div>
                 <div className="text-xs text-gray-500 uppercase tracking-wide">{comment.role}</div>
