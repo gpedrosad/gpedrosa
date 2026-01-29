@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaPlus, FaShoppingCart, FaBoxOpen, FaChartLine, FaExclamationTriangle } from 'react-icons/fa';
+import { FaPlus, FaShoppingCart, FaBoxOpen, FaChartLine, FaExclamationTriangle, FaFileExcel } from 'react-icons/fa';
+import * as XLSX from 'xlsx';
 
 // ============================================================================
 // TIPOS
@@ -36,6 +37,8 @@ interface MetricasProducto {
   capital_inmovilizado: number;
   margen_bruto_porcentaje: number;
   margen_bruto_unitario: number;
+  utilidad_total: number;
+  utilidad_diaria_promedio: number;
 }
 
 // ============================================================================
@@ -73,6 +76,10 @@ const calcularMetricas = (producto: Producto): MetricasProducto => {
     ? (margen_bruto_unitario / producto.precio_venta) * 100 
     : 0;
 
+  // Utilidad total y diaria
+  const utilidad_total = producto.ventas_totales * margen_bruto_unitario;
+  const utilidad_diaria_promedio = utilidad_total / dias_activos;
+
   return {
     dias_activos,
     dias_sin_stock,
@@ -82,6 +89,8 @@ const calcularMetricas = (producto: Producto): MetricasProducto => {
     capital_inmovilizado,
     margen_bruto_porcentaje,
     margen_bruto_unitario,
+    utilidad_total,
+    utilidad_diaria_promedio,
   };
 };
 
@@ -287,6 +296,144 @@ export default function InventarioDashboard() {
     }
   };
 
+  const descargarExcel = () => {
+    if (productos.length === 0) {
+      alert('No hay productos para exportar');
+      return;
+    }
+
+    // Preparar los datos para el Excel
+    const datosExcel = productos.map((producto) => {
+      const metricas = calcularMetricas(producto);
+      return {
+        'Nombre': producto.nombre,
+        'SKU': producto.sku,
+        'Stock Actual': producto.stock_actual,
+        'Ventas Totales': producto.ventas_totales,
+        'Costo Unitario': producto.costo_unitario_puesto,
+        'Precio Venta': producto.precio_venta,
+        'Margen Bruto %': parseFloat(formatearNumero(metricas.margen_bruto_porcentaje, 2)),
+        'Margen Bruto Unitario': parseFloat(formatearNumero(metricas.margen_bruto_unitario, 2)),
+        'Utilidad Total': parseFloat(formatearNumero(metricas.utilidad_total, 2)),
+        'Utilidad Diaria Promedio': parseFloat(formatearNumero(metricas.utilidad_diaria_promedio, 2)),
+        'Capital Inmovilizado': parseFloat(formatearNumero(metricas.capital_inmovilizado, 2)),
+        'Días Activos': metricas.dias_activos,
+        'Días Sin Stock': metricas.dias_sin_stock,
+        'Venta Diaria Promedio': parseFloat(formatearNumero(metricas.venta_diaria_promedio, 2)),
+        'Días Cobertura Restantes': isFinite(metricas.dias_cobertura_restantes) 
+          ? parseFloat(formatearNumero(metricas.dias_cobertura_restantes, 2))
+          : 999999,
+        'Lead Time (días)': producto.lead_time_dias,
+        'Punto Reposición': parseFloat(formatearNumero(metricas.punto_reposicion, 2)),
+        'Fecha Inicio Stock': formatearFecha(producto.fecha_inicio_stock),
+        'Último Movimiento': formatearFecha(producto.fecha_ultimo_movimiento),
+      };
+    });
+
+    // Crear el libro de trabajo
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(datosExcel);
+
+    // Ajustar el ancho de las columnas
+    const columnWidths = [
+      { wch: 20 }, // Nombre
+      { wch: 15 }, // SKU
+      { wch: 12 }, // Stock Actual
+      { wch: 15 }, // Ventas Totales
+      { wch: 18 }, // Costo Unitario
+      { wch: 18 }, // Precio Venta
+      { wch: 15 }, // Margen Bruto %
+      { wch: 22 }, // Margen Bruto Unitario
+      { wch: 20 }, // Utilidad Total
+      { wch: 24 }, // Utilidad Diaria Promedio
+      { wch: 22 }, // Capital Inmovilizado
+      { wch: 15 }, // Días Activos
+      { wch: 15 }, // Días Sin Stock
+      { wch: 22 }, // Venta Diaria Promedio
+      { wch: 24 }, // Días Cobertura Restantes
+      { wch: 18 }, // Lead Time (días)
+      { wch: 20 }, // Punto Reposición
+      { wch: 18 }, // Fecha Inicio Stock
+      { wch: 18 }, // Último Movimiento
+    ];
+    ws['!cols'] = columnWidths;
+
+    // Aplicar formato numérico con separadores de miles y decimales
+    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+    
+    for (let row = range.s.r + 1; row <= range.e.r; row++) {
+      // Costo Unitario (columna E - índice 4)
+      const cellCosto = XLSX.utils.encode_cell({ r: row, c: 4 });
+      if (ws[cellCosto]) {
+        ws[cellCosto].z = '#,##0';
+      }
+      
+      // Precio Venta (columna F - índice 5)
+      const cellPrecio = XLSX.utils.encode_cell({ r: row, c: 5 });
+      if (ws[cellPrecio]) {
+        ws[cellPrecio].z = '#,##0';
+      }
+      
+      // Margen Bruto % (columna G - índice 6)
+      const cellMargenPct = XLSX.utils.encode_cell({ r: row, c: 6 });
+      if (ws[cellMargenPct]) {
+        ws[cellMargenPct].z = '#,##0.00';
+      }
+      
+      // Margen Bruto Unitario (columna H - índice 7)
+      const cellMargenUnit = XLSX.utils.encode_cell({ r: row, c: 7 });
+      if (ws[cellMargenUnit]) {
+        ws[cellMargenUnit].z = '#,##0.00';
+      }
+      
+      // Utilidad Total (columna I - índice 8)
+      const cellUtilidadTotal = XLSX.utils.encode_cell({ r: row, c: 8 });
+      if (ws[cellUtilidadTotal]) {
+        ws[cellUtilidadTotal].z = '#,##0.00';
+      }
+      
+      // Utilidad Diaria Promedio (columna J - índice 9)
+      const cellUtilidadDiaria = XLSX.utils.encode_cell({ r: row, c: 9 });
+      if (ws[cellUtilidadDiaria]) {
+        ws[cellUtilidadDiaria].z = '#,##0.00';
+      }
+      
+      // Capital Inmovilizado (columna K - índice 10)
+      const cellCapital = XLSX.utils.encode_cell({ r: row, c: 10 });
+      if (ws[cellCapital]) {
+        ws[cellCapital].z = '#,##0.00';
+      }
+      
+      // Venta Diaria Promedio (columna N - índice 13)
+      const cellVentaDiaria = XLSX.utils.encode_cell({ r: row, c: 13 });
+      if (ws[cellVentaDiaria]) {
+        ws[cellVentaDiaria].z = '#,##0.00';
+      }
+      
+      // Días Cobertura Restantes (columna O - índice 14)
+      const cellCobertura = XLSX.utils.encode_cell({ r: row, c: 14 });
+      if (ws[cellCobertura]) {
+        ws[cellCobertura].z = '#,##0.00';
+      }
+      
+      // Punto Reposición (columna Q - índice 16)
+      const cellPuntoRepo = XLSX.utils.encode_cell({ r: row, c: 16 });
+      if (ws[cellPuntoRepo]) {
+        ws[cellPuntoRepo].z = '#,##0.00';
+      }
+    }
+
+    // Agregar la hoja al libro
+    XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+
+    // Generar el nombre del archivo con la fecha actual
+    const fecha = new Date().toISOString().split('T')[0];
+    const nombreArchivo = `inventario_${fecha}.xlsx`;
+
+    // Descargar el archivo
+    XLSX.writeFile(wb, nombreArchivo);
+  };
+
   const limpiarFormularioProducto = () => {
     setFormNombre('');
     setFormSKU('');
@@ -319,6 +466,10 @@ export default function InventarioDashboard() {
     const metricas = calcularMetricas(p);
     return sum + metricas.capital_inmovilizado;
   }, 0);
+  const totalUtilidadGenerada = productos.reduce((sum, p) => {
+    const metricas = calcularMetricas(p);
+    return sum + metricas.utilidad_total;
+  }, 0);
   const productosEnRiesgo = productos.filter((p) => {
     const metricas = calcularMetricas(p);
     return metricas.dias_cobertura_restantes < p.lead_time_dias;
@@ -343,7 +494,7 @@ export default function InventarioDashboard() {
         </div>
 
         {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
           <div className="bg-white dark:bg-slate-800 rounded-lg p-5 shadow border border-slate-200 dark:border-slate-700">
             <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Productos</div>
             <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">{totalProductos}</div>
@@ -357,6 +508,13 @@ export default function InventarioDashboard() {
           <div className="bg-white dark:bg-slate-800 rounded-lg p-5 shadow border border-slate-200 dark:border-slate-700">
             <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Ventas Totales</div>
             <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">{totalVentas}</div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-5 shadow border border-slate-200 dark:border-slate-700">
+            <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Utilidad Generada</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              ${totalUtilidadGenerada.toLocaleString('es-CL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </div>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-lg p-5 shadow border border-slate-200 dark:border-slate-700">
@@ -384,6 +542,16 @@ export default function InventarioDashboard() {
             <FaPlus className="w-4 h-4" />
             Nuevo Producto
           </button>
+          
+          {productos.length > 0 && (
+            <button
+              onClick={descargarExcel}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-colors shadow"
+            >
+              <FaFileExcel className="w-4 h-4" />
+              Descargar Excel
+            </button>
+          )}
           
           {productos.length === 0 && (
             <button
@@ -435,6 +603,8 @@ export default function InventarioDashboard() {
                     <th className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">Costo Unit.</th>
                     <th className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">Precio Venta</th>
                     <th className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">Margen %</th>
+                    <th className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">Utilidad Total</th>
+                    <th className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">Utilidad Diaria</th>
                     <th className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">Capital Inmov.</th>
                     <th className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">Días Activos</th>
                     <th className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">Vta. Diaria Prom.</th>
@@ -490,6 +660,12 @@ export default function InventarioDashboard() {
                             : 'text-green-600 dark:text-green-400'
                         }`}>
                           {formatearNumero(metricas.margen_bruto_porcentaje, 1)}%
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold text-green-600 dark:text-green-400">
+                          ${formatearNumero(metricas.utilidad_total, 0)}
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold text-emerald-600 dark:text-emerald-400">
+                          ${formatearNumero(metricas.utilidad_diaria_promedio, 0)}
                         </td>
                         <td className="px-4 py-3 text-right font-semibold text-purple-600 dark:text-purple-400">
                           ${formatearNumero(metricas.capital_inmovilizado, 0)}
@@ -563,6 +739,8 @@ export default function InventarioDashboard() {
               <div>• <span className="text-blue-600 dark:text-blue-400 font-semibold">Punto Reposición:</span> Stock mínimo antes de pedir</div>
               <div>• <span className="text-purple-600 dark:text-purple-400 font-semibold">Capital Inmovilizado:</span> Stock actual × Costo unitario</div>
               <div>• <span className="font-semibold">Margen Bruto:</span> (Precio venta - Costo) / Precio venta × 100</div>
+              <div>• <span className="text-green-600 dark:text-green-400 font-semibold">Utilidad Total:</span> Ventas totales × Margen bruto unitario</div>
+              <div>• <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Utilidad Diaria:</span> Utilidad total / Días activos</div>
             </div>
           </div>
         )}
