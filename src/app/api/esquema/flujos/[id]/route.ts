@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { conFlujo, importarTextoPlano } from "@/lib/esquema";
+import { conFlujo, importarTextoPlano, parchearFlujo } from "@/lib/esquema";
 import { obtenerFlujo } from "@/lib/supabase-flujos";
 
 export const runtime = "nodejs";
@@ -39,9 +39,27 @@ export async function PUT(request: Request, contexto: Contexto) {
     const fila = await obtenerFlujo(id);
     if (!fila) return NextResponse.json({ error: "No existe ese flujo" }, { status: 404 });
     await conFlujo(id, () => importarTextoPlano(texto, "reemplazar"));
-    return NextResponse.json({ id, url: `/esquema?flujo=${id}` });
+    return new NextResponse(`id: ${id}\nurl: /esquema?flujo=${id}\n`, {
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "No se pudo guardar el flujo";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+}
+
+export async function PATCH(request: Request, contexto: Contexto) {
+  const { id } = await contexto.params;
+  const texto = await request.text();
+  try {
+    const fila = await obtenerFlujo(id);
+    if (!fila) return NextResponse.json({ error: "No existe ese flujo" }, { status: 404 });
+    await conFlujo(id, () => parchearFlujo(texto));
+    return new NextResponse(`id: ${id}\nurl: /esquema?flujo=${id}\n`, {
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "No se pudo cambiar el flujo";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

@@ -9,7 +9,7 @@ description: >-
 # Marketing
 
 Mapa: `marketing.md` en la raíz del repo.
-Los flujos publicados viven en Supabase, proyecto KaWa (`dkpihigjlifjvxiszkew`), tabla `gpedrosa_flujos`. Una fila por flujo: `titulo`, `texto` (formato plano) y `esquema` (grafo). El editor `/esquema` lee y escribe esa tabla. El contrato para leer, crear y reemplazar flujos es `marketing/FORMATO_FLUJO.md`, servido en `GET /api/esquema/formato`. Para escribir un flujo: `POST /api/esquema/flujos` solo con `{"titulo"}` y después `PUT /api/esquema/flujos/{id}` con `Content-Type: text/plain` y el texto plano en el cuerpo. Ese PUT reemplaza solo ese id.
+Los flujos publicados viven en Supabase, proyecto KaWa (`dkpihigjlifjvxiszkew`), tabla `gpedrosa_flujos`. Una fila por flujo: `titulo`, `texto` (formato plano) y `esquema` (grafo). El editor `/esquema` lee y escribe esa tabla. El contrato para un LLM está en `marketing/FORMATO_FLUJO.md` y en `GET /api/esquema/formato`. Publicar un flujo es un solo `POST /api/esquemas` con JSON `{ titulo?, anuncio, h1, intro, valor, cta }`. La respuesta trae `url` y `conexiones` (puntuación, resumen, recomendación y brechas de cada unión, evaluadas al crear). `GET /api/esquemas/{id}` relee ese feedback sin volver a llamar a la IA. No uses la pantalla ni pidas el texto plano para este caso.
 Los archivos `marketing/esquema.json` y `marketing/nodos/` solo siembran la primera fila si la tabla está vacía.
 Editor: `/esquema`. Landing: `src/app/captacion/page.tsx`.
 

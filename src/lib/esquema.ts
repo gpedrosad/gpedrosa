@@ -60,6 +60,43 @@ async function idDeTrabajo() {
   return pedido;
 }
 
+const CAMPOS_ESQUEMA = ["anuncio", "h1", "intro", "valor", "cta"] as const;
+
+export async function crearEsquemaSimple(
+  campos: Record<string, string>,
+  titulo?: string
+) {
+  const faltan = CAMPOS_ESQUEMA.filter((campo) => !campos[campo]?.trim());
+  if (faltan.length) throw new Error(`Faltan: ${faltan.join(", ")}`);
+
+  const nombre =
+    titulo?.trim() ||
+    campos.anuncio.trim().split("\n")[0].slice(0, 48) ||
+    "Flujo";
+  const bloques = [
+    ["anuncio", "Anuncio", campos.anuncio.trim()],
+    ["h1", "H1", campos.h1.trim()],
+    ["intro", "Intro", campos.intro.trim()],
+    ["valor", "Valor", campos.valor.trim()],
+    ["cta", "CTA", campos.cta.trim()],
+  ];
+  const uniones = [
+    ["anuncio", "h1", "El H1 continúa la promesa del anuncio."],
+    ["h1", "intro", "La intro desarrolla el H1 sin cambiar de promesa."],
+    ["intro", "valor", "El valor concreta lo que la intro abrió."],
+    ["valor", "cta", "El CTA pide el paso que el valor ya justificó."],
+  ];
+  const texto = [
+    ...bloques.map(([id, tituloPaso, cuerpo]) =>
+      [`=== PASO ===`, `ID: ${id}`, `TÍTULO: ${tituloPaso}`, "CONTENIDO:", cuerpo].join("\n")
+    ),
+    ...uniones.map(([desde, hasta, criterio]) =>
+      [`=== CONEXIÓN ===`, `DESDE: ${desde}`, `HASTA: ${hasta}`, "CRITERIO:", criterio].join("\n")
+    ),
+  ].join("\n\n");
+  return crearFlujo(nombre, texto);
+}
+
 export async function crearFlujo(titulo: string, texto?: string) {
   const nombre = titulo.trim();
   if (!nombre) throw new Error("El flujo necesita un nombre");
@@ -242,6 +279,49 @@ function posicionAutomatica(index: number, baseY = 80) {
   const fila = Math.floor(index / 3);
   const x = fila % 2 === 0 ? 40 + columna * PASO : 40 + (2 - columna) * PASO;
   return { x, y: baseY + fila * 400 };
+}
+
+export async function parchearFlujo(texto: string) {
+  const marcas = texto.match(/^===\s*(PASO|CONEXI[ÓO]N)\s*===\s*$/gim) ?? [];
+  if (marcas.length > 1) {
+    throw new Error("PATCH cambia un solo paso o una sola conexión. Para el flujo entero usá PUT.");
+  }
+
+  const mapa = await leerMapa();
+  const desde = campoUnaLinea(texto, /^DESDE\s*:\s*/i);
+  const hasta = campoUnaLinea(texto, /^HASTA\s*:\s*/i);
+  if (desde && hasta) {
+    const enlace = mapa.enlaces.find(
+      (item) => item.desde === slug(desde) && item.hasta === slug(hasta)
+    );
+    if (!enlace?.criterio) {
+      throw new Error(`No existe la conexión ${slug(desde)} → ${slug(hasta)}`);
+    }
+    const criterio = mapa.nodos.find((nodo) => nodo.id === enlace.criterio);
+    if (!criterio) throw new Error("La conexión no tiene criterio");
+    const cuerpo = cuerpoDesde(texto, /^CRITERIO\s*:\s*$/i);
+    if (!cuerpo) {
+      throw new Error("CRITERIO: va solo en su línea y el texto empieza en la línea siguiente");
+    }
+    criterio.cuerpo = cuerpo;
+    await guardarMapa(mapa);
+    return;
+  }
+
+  const idLinea = campoUnaLinea(texto, /^ID\s*:\s*/i);
+  if (!idLinea) {
+    throw new Error("Indicá ID: del paso, o DESDE: y HASTA: de la conexión");
+  }
+  const nodo = mapa.nodos.find((item) => item.id === slug(idLinea) && item.tipo !== "criterio");
+  if (!nodo) throw new Error(`No existe el paso ${slug(idLinea)}`);
+  const titulo = campoUnaLinea(texto, /^T[IÍ]TULO\s*:\s*/i);
+  if (titulo) nodo.titulo = titulo;
+  if (/^CONTENIDO\s*:\s*$/im.test(texto)) {
+    nodo.cuerpo = cuerpoDesde(texto, /^CONTENIDO\s*:\s*$/i);
+  } else if (!titulo) {
+    throw new Error("CONTENIDO: va solo en su línea y el texto empieza en la línea siguiente");
+  }
+  await guardarMapa(mapa);
 }
 
 export async function importarTextoPlano(
