@@ -96,6 +96,27 @@ export async function guardarFlujo(
   );
 }
 
+export async function renombrarFlujo(id: string, titulo: string) {
+  await rest(`gpedrosa_flujos?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({
+      titulo,
+      updated_at: new Date().toISOString(),
+    }),
+  });
+}
+
+export async function eliminarFlujo(id: string) {
+  const fila = await obtenerFlujo(id);
+  if (!fila) return false;
+  await rest(`gpedrosa_flujos?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { Prefer: "return=minimal" },
+  });
+  return true;
+}
+
 export async function insertarFlujo(id: string, titulo: string, texto = "") {
   await rest("gpedrosa_flujos", {
     method: "POST",

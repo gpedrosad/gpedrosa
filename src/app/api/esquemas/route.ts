@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { conFlujo, crearEsquemaSimple, leerEsquema } from "@/lib/esquema";
-import { evaluarEnlace } from "@/lib/rellenar-nodo";
+import { conFlujo, crearEsquemaSimple, flujos } from "@/lib/esquema";
+import { feedbackConexiones } from "@/lib/feedback-esquema";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,6 +12,23 @@ function textoDe(body: Record<string, unknown>, ...claves: string[]) {
     if (typeof valor === "string") return valor;
   }
   return "";
+}
+
+export async function GET(request: Request) {
+  try {
+    const origen = new URL(request.url).origin;
+    const lista = await flujos();
+    return NextResponse.json({
+      flujos: lista.map((flujo) => ({
+        id: flujo.id,
+        titulo: flujo.titulo,
+        url: `${origen}/esquema?flujo=${flujo.id}`,
+      })),
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "No se pudieron listar los flujos";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }
 
 export async function POST(request: Request) {
@@ -34,30 +51,7 @@ export async function POST(request: Request) {
       textoDe(body, "titulo", "título")
     );
     const origen = new URL(request.url).origin;
-    const conexiones = await conFlujo(creado.id, async () => {
-      const esquema = await leerEsquema();
-      const salida = [];
-      for (const enlace of esquema.enlaces) {
-        try {
-          const evaluacion = await evaluarEnlace(enlace.id);
-          salida.push({
-            desde: enlace.desde,
-            hasta: enlace.hasta,
-            puntuacion: evaluacion.puntuacion,
-            resumen: evaluacion.resumen,
-            recomendacion: evaluacion.recomendacion,
-            brechas: evaluacion.brechas,
-          });
-        } catch (error) {
-          salida.push({
-            desde: enlace.desde,
-            hasta: enlace.hasta,
-            error: error instanceof Error ? error.message : "No se pudo evaluar",
-          });
-        }
-      }
-      return salida;
-    });
+    const conexiones = await conFlujo(creado.id, () => feedbackConexiones());
     return NextResponse.json({
       id: creado.id,
       url: `${origen}/esquema?flujo=${creado.id}`,

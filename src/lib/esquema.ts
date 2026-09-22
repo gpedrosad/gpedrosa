@@ -12,6 +12,7 @@ import {
   insertarFlujo,
   listarFlujos,
   obtenerFlujo,
+  renombrarFlujo,
   type EsquemaGuardado,
   type NodoGuardado,
 } from "./supabase-flujos";
@@ -95,6 +96,40 @@ export async function crearEsquemaSimple(
     ),
   ].join("\n\n");
   return crearFlujo(nombre, texto);
+}
+
+export async function editarEsquemaSimple(
+  id: string,
+  campos: Partial<Record<(typeof CAMPOS_ESQUEMA)[number], string>>,
+  titulo?: string
+) {
+  const fila = await obtenerFlujo(id);
+  if (!fila) throw new Error("No existe ese flujo");
+
+  const cambios = CAMPOS_ESQUEMA.filter((campo) => Boolean(campos[campo]?.trim()));
+  const nombre = titulo?.trim() ?? "";
+  if (!cambios.length && !nombre) {
+    throw new Error("Mandá al menos un campo: anuncio, h1, intro, valor, cta o titulo");
+  }
+
+  await conFlujo(id, async () => {
+    if (!cambios.length) return;
+    const mapa = await leerMapa();
+    for (const campo of cambios) {
+      const nodo = mapa.nodos.find((item) => item.id === campo && item.tipo !== "criterio");
+      if (!nodo) throw new Error(`Este flujo no tiene el paso ${campo}`);
+      nodo.cuerpo = campos[campo]!.trim();
+    }
+    for (const enlace of mapa.enlaces) {
+      if (cambios.some((campo) => enlace.desde === campo || enlace.hasta === campo)) {
+        delete enlace.evaluacion;
+      }
+    }
+    await guardarMapa(mapa);
+  });
+
+  if (nombre) await renombrarFlujo(id, nombre);
+  return { id, tocados: cambios };
 }
 
 export async function crearFlujo(titulo: string, texto?: string) {
