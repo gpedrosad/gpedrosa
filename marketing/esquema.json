@@ -1,0 +1,336 @@
+{
+  "nodos": [
+    {
+      "id": "copy",
+      "titulo": "Copy del anuncio",
+      "archivo": "nodos/copy.md",
+      "x": 40,
+      "y": 80,
+      "tipo": "flujo"
+    },
+    {
+      "id": "criterio",
+      "titulo": "Criterio",
+      "archivo": "nodos/criterio.md",
+      "x": 314,
+      "y": 108,
+      "tipo": "criterio"
+    },
+    {
+      "id": "landing",
+      "titulo": "Brief de landing",
+      "archivo": "nodos/landing.md",
+      "x": 555,
+      "y": 63,
+      "tipo": "flujo"
+    },
+    {
+      "id": "criterio-2",
+      "titulo": "Criterio",
+      "archivo": "nodos/criterio-2.md",
+      "x": 834,
+      "y": 108,
+      "tipo": "criterio"
+    },
+    {
+      "id": "titulo",
+      "titulo": "Título principal",
+      "archivo": "nodos/titulo.md",
+      "x": 1080,
+      "y": 80,
+      "tipo": "flujo"
+    },
+    {
+      "id": "criterio-3",
+      "titulo": "Criterio",
+      "archivo": "nodos/criterio-3.md",
+      "x": 1096,
+      "y": 316,
+      "tipo": "criterio"
+    },
+    {
+      "id": "introduccion-al-tema",
+      "titulo": "Introducción",
+      "archivo": "nodos/introduccion-al-tema.md",
+      "x": 1080,
+      "y": 480,
+      "tipo": "flujo"
+    },
+    {
+      "id": "criterio-4",
+      "titulo": "Criterio",
+      "archivo": "nodos/criterio-4.md",
+      "x": 836,
+      "y": 516,
+      "tipo": "criterio"
+    },
+    {
+      "id": "desarrollo-de-valor",
+      "titulo": "Desarrollo de valor",
+      "archivo": "nodos/desarrollo-de-valor.md",
+      "x": 560,
+      "y": 480,
+      "tipo": "flujo"
+    },
+    {
+      "id": "criterio-5",
+      "titulo": "Criterio",
+      "archivo": "nodos/criterio-5.md",
+      "x": 316,
+      "y": 516,
+      "tipo": "criterio"
+    },
+    {
+      "id": "cta-final",
+      "titulo": "CTA final",
+      "archivo": "nodos/cta-final.md",
+      "x": 40,
+      "y": 480,
+      "tipo": "flujo"
+    }
+  ],
+  "enlaces": [
+    {
+      "id": "copy-landing",
+      "desde": "copy",
+      "hasta": "landing",
+      "criterio": "criterio",
+      "evaluacion": {
+        "puntuacion": 85,
+        "nivel": "alta",
+        "resumen": "La landing cumple en gran medida con la promesa del anuncio, manteniendo el enfoque en el juego problemático en la familia y ofreciendo recursos útiles. Sin embargo, podría mejorar en la claridad del avance y en la consistencia del tono.",
+        "dimensiones": [
+          {
+            "nombre": "cumplimiento del criterio",
+            "puntuacion": 90,
+            "justificacion": "La landing sigue el tema del juego problemático en la familia y ofrece recursos relevantes para familiares, cumpliendo con la mayoría de los aspectos del criterio."
+          },
+          {
+            "nombre": "continuidad semántica",
+            "puntuacion": 80,
+            "justificacion": "La conexión temática es fuerte, aunque algunos elementos podrían ser más específicos para reforzar la continuidad del mensaje inicial."
+          },
+          {
+            "nombre": "claridad del avance",
+            "puntuacion": 75,
+            "justificacion": "Si bien hay un camino claro hacia la conversión, la estructura podría ser más directa para facilitar la navegación del usuario."
+          },
+          {
+            "nombre": "consistencia de audiencia/tono",
+            "puntuacion": 80,
+            "justificacion": "El tono es mayormente consistente, pero algunos elementos podrían ajustarse para resonar mejor con la audiencia específica de familiares."
+          },
+          {
+            "nombre": "ausencia de contradicciones o fricción",
+            "puntuacion": 90,
+            "justificacion": "No se identifican contradicciones ni fricciones significativas, y el diseño es intuitivo y fácil de navegar."
+          }
+        ],
+        "aciertos": [
+          "Mantiene el enfoque en el juego problemático en la familia.",
+          "Ofrece recursos prácticos y testimonios que refuerzan la motivación."
+        ],
+        "brechas": [
+          "Podría mejorar la claridad del avance en la navegación.",
+          "Algunos elementos del tono podrían ajustarse para ser más específicos para la audiencia."
+        ],
+        "recomendacion": "Revisar la estructura de la landing para hacer el recorrido más directo y claro, facilitando la navegación hacia los recursos y la conversión.",
+        "evaluadoEn": "2026-09-22T03:14:54.569Z"
+      }
+    },
+    {
+      "id": "landing-titulo",
+      "desde": "landing",
+      "hasta": "titulo",
+      "criterio": "criterio-2",
+      "evaluacion": {
+        "puntuacion": 85,
+        "nivel": "alta",
+        "resumen": "El paso de destino cumple en gran medida con el criterio de conexión, ofreciendo un título claro y específico que se alinea con las necesidades de los familiares. Sin embargo, podría mejorar en la claridad de la promesa y en la conexión directa con el contenido del brief.",
+        "dimensiones": [
+          {
+            "nombre": "cumplimiento del criterio",
+            "puntuacion": 80,
+            "justificacion": "El título menciona a los familiares y el problema del juego, pero podría ser más específico sobre la claridad práctica que se ofrece."
+          },
+          {
+            "nombre": "continuidad semántica",
+            "puntuacion": 90,
+            "justificacion": "El título mantiene el enfoque en el juego problemático y se alinea con el contenido del brief, aunque podría ser más directo en la promesa de claridad."
+          },
+          {
+            "nombre": "claridad del avance",
+            "puntuacion": 85,
+            "justificacion": "El avance es claro, pero la promesa de 'aprender a ordenar' podría ser más explícita en cuanto a los beneficios concretos que se obtendrán."
+          },
+          {
+            "nombre": "consistencia de audiencia/tono",
+            "puntuacion": 90,
+            "justificacion": "El tono es adecuado para la audiencia familiar, manteniendo un enfoque empático y accesible."
+          },
+          {
+            "nombre": "ausencia de contradicciones o fricción",
+            "puntuacion": 90,
+            "justificacion": "No se observan contradicciones ni fricciones en el mensaje, lo que facilita la transición entre los pasos."
+          }
+        ],
+        "aciertos": [
+          "El título menciona claramente a los familiares y el problema del juego.",
+          "Se mantiene un tono empático y accesible."
+        ],
+        "brechas": [
+          "La promesa de claridad práctica podría ser más específica.",
+          "El avance podría detallar más los beneficios concretos que se obtendrán."
+        ],
+        "recomendacion": "Ajustar el título para que refleje de manera más directa la claridad práctica que los familiares obtendrán al seguir la guía.",
+        "evaluadoEn": "2026-09-22T03:14:59.523Z"
+      }
+    },
+    {
+      "id": "titulo-introduccion",
+      "desde": "titulo",
+      "hasta": "introduccion-al-tema",
+      "criterio": "criterio-3",
+      "evaluacion": {
+        "puntuacion": 85,
+        "nivel": "alta",
+        "resumen": "La introducción cumple en gran medida con la promesa del título, abordando las preocupaciones del familiar y ofreciendo un enfoque claro sobre cómo proceder. Sin embargo, hay un ligero desvío en la forma en que se presenta la información, lo que afecta la continuidad semántica.",
+        "dimensiones": [
+          {
+            "nombre": "cumplimiento del criterio",
+            "puntuacion": 90,
+            "justificacion": "La introducción valida la situación del familiar y explica claramente lo que encontrará en la guía, cumpliendo con la mayoría de los puntos del criterio."
+          },
+          {
+            "nombre": "continuidad semántica",
+            "puntuacion": 80,
+            "justificacion": "Aunque se mantiene el enfoque en señales y conversación, la introducción introduce un tono emocional que podría desviar un poco del enfoque práctico inicial."
+          },
+          {
+            "nombre": "claridad del avance",
+            "puntuacion": 85,
+            "justificacion": "El avance hacia el contenido práctico es claro, pero podría ser más directo en la transición entre la identificación de problemas y la acción a seguir."
+          },
+          {
+            "nombre": "consistencia de audiencia/tono",
+            "puntuacion": 90,
+            "justificacion": "El tono es empático y adecuado para la audiencia, manteniendo una voz coherente a lo largo del texto."
+          },
+          {
+            "nombre": "ausencia de contradicciones o fricción",
+            "puntuacion": 80,
+            "justificacion": "No hay contradicciones evidentes, pero la mezcla de emociones podría generar cierta fricción en la interpretación del mensaje."
+          }
+        ],
+        "aciertos": [
+          "Valida la situación del familiar sin juzgar.",
+          "Explica claramente qué encontrará en la guía.",
+          "Mantiene el foco en señales, conversación y búsqueda de apoyo."
+        ],
+        "brechas": [
+          "Introducción de un tono emocional que puede desviar del enfoque práctico.",
+          "Transición entre la identificación de problemas y la acción podría ser más directa."
+        ],
+        "recomendacion": "Ajustar la introducción para que se enfoque más en el contenido práctico y menos en las emociones, asegurando una transición más fluida hacia los pasos a seguir.",
+        "evaluadoEn": "2026-09-22T03:15:04.129Z"
+      }
+    },
+    {
+      "id": "introduccion-desarrollo",
+      "desde": "introduccion-al-tema",
+      "hasta": "desarrollo-de-valor",
+      "criterio": "criterio-4",
+      "evaluacion": {
+        "puntuacion": 90,
+        "nivel": "alta",
+        "resumen": "El desarrollo de valor cumple de manera efectiva con las promesas de la introducción, ofreciendo acciones concretas y claras para abordar la situación. La continuidad semántica y la claridad del avance son fuertes, aunque hay ligeras áreas de mejora en la consistencia de tono.",
+        "dimensiones": [
+          {
+            "nombre": "cumplimiento del criterio",
+            "puntuacion": 95,
+            "justificacion": "El desarrollo aborda todos los puntos prometidos en la introducción, proporcionando acciones concretas y separando el acompañamiento del control."
+          },
+          {
+            "nombre": "continuidad semántica",
+            "puntuacion": 85,
+            "justificacion": "La transición entre la introducción y el desarrollo es fluida, aunque podría beneficiarse de una mayor conexión entre algunos conceptos."
+          },
+          {
+            "nombre": "claridad del avance",
+            "puntuacion": 90,
+            "justificacion": "Las acciones y pasos a seguir están claramente delineados, facilitando la comprensión del lector sobre cómo proceder."
+          },
+          {
+            "nombre": "consistencia de audiencia/tono",
+            "puntuacion": 80,
+            "justificacion": "El tono es mayormente consistente, pero hay momentos donde podría ser más empático para alinearse mejor con la audiencia."
+          },
+          {
+            "nombre": "ausencia de contradicciones o fricción",
+            "puntuacion": 95,
+            "justificacion": "No se identifican contradicciones ni fricciones en el contenido, lo que permite una lectura fluida y coherente."
+          }
+        ],
+        "aciertos": [
+          "Proporciona acciones concretas para abordar la preocupación.",
+          "Separa claramente el acompañamiento del control.",
+          "Incluye pautas útiles para la conversación y el apoyo profesional."
+        ],
+        "brechas": [
+          "Podría mejorar la conexión emocional con la audiencia.",
+          "Algunos conceptos podrían estar más interrelacionados para una mejor fluidez."
+        ],
+        "recomendacion": "Incluir ejemplos o anécdotas que resalten la empatía y conexión emocional con la audiencia para fortalecer el tono y la relación con el lector.",
+        "evaluadoEn": "2026-09-22T03:15:07.906Z"
+      }
+    },
+    {
+      "id": "desarrollo-cta",
+      "desde": "desarrollo-de-valor",
+      "hasta": "cta-final",
+      "criterio": "criterio-5",
+      "evaluacion": {
+        "puntuacion": 85,
+        "nivel": "alta",
+        "resumen": "El paso de destino se conecta bien con el paso de origen, ofreciendo un CTA claro y alineado con los beneficios mencionados. Sin embargo, hay ligeras áreas de mejora en la claridad del avance y la consistencia del tono.",
+        "dimensiones": [
+          {
+            "nombre": "cumplimiento del criterio",
+            "puntuacion": 90,
+            "justificacion": "El CTA se alinea bien con el valor ofrecido, repitiendo el beneficio principal y explicando claramente qué se obtiene."
+          },
+          {
+            "nombre": "continuidad semántica",
+            "puntuacion": 80,
+            "justificacion": "La transición es fluida, aunque podría reforzarse la conexión entre la preparación de la conversación y el envío de la guía."
+          },
+          {
+            "nombre": "claridad del avance",
+            "puntuacion": 75,
+            "justificacion": "El avance es claro, pero podría beneficiarse de una mayor especificidad sobre el contenido de la guía."
+          },
+          {
+            "nombre": "consistencia de audiencia/tono",
+            "puntuacion": 85,
+            "justificacion": "El tono es consistente con el paso de origen, aunque hay un ligero cambio en la formalidad que podría ajustarse."
+          },
+          {
+            "nombre": "ausencia de contradicciones o fricción",
+            "puntuacion": 90,
+            "justificacion": "No se presentan contradicciones ni fricciones, manteniendo un enfoque claro y directo."
+          }
+        ],
+        "aciertos": [
+          "El CTA repite el beneficio principal de la guía.",
+          "Se evita la urgencia artificial y las promesas de resultados garantizados."
+        ],
+        "brechas": [
+          "Podría haber una mayor especificidad sobre el contenido de la guía en el CTA.",
+          "El tono podría ser más uniforme entre ambos pasos."
+        ],
+        "recomendacion": "Asegurarse de que el CTA incluya una breve descripción de lo que contiene la guía para aumentar la claridad y la expectativa del usuario.",
+        "evaluadoEn": "2026-09-22T03:15:12.064Z"
+      }
+    }
+  ]
+}

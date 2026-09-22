@@ -1,0 +1,9 @@
+- Título claro y atractivo que refleje el tema del juego problemático en la familia (para seguir el criterio de "Follows up on ad").
+- Sección de introducción que explique brevemente la importancia del tema y cómo afecta a las familias (para "Matches the awareness level").
+- Listado de consejos prácticos y recursos para familiares que enfrentan el juego problemático (para "Answers important questions").
+- Testimonios o historias de otras familias que han enfrentado situaciones similares (para "Reinforces motivation").
+- Diseño intuitivo y fácil de navegar que minimice la confusión del usuario (para "Reduces user friction").
+- Botones de llamada a la acción claros y visibles que guíen al usuario hacia el siguiente paso (para "Clear path to the conversion goal").
+- Sección de preguntas frecuentes que aborde inquietudes comunes sobre el juego problemático (para "Answers important questions").
+- Enlaces a recursos externos o líneas de ayuda para apoyo adicional (para "Answers important questions").
+- Información de contacto para asistencia personalizada (para "Answers important questions").
