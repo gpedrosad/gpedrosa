@@ -116,11 +116,13 @@ Tú, no vos. En el anuncio, la landing, la thank-you, el formulario y los emails
 
 ### Cómo se escribe la landing
 
-Corta. El único trabajo es el email. En el hero no compite nada con el CTA.
+Corta. El único trabajo es el email. En el hero no compite nada con el CTA. El hero tiene que caber en la primera pantalla de un celular 390×844.
 
-No diagnosticar (“esto es para ti si tu marido es ludópata”). No inflar autoridad. Si hay credencial, que sea verificable: psicólogo clínico. Foto profesional, sin autobiografía.
+Español de Chile con tú. No voseo. No rayas largas. No prometer que la persona va a dejar de apostar. No hablar de proteger la plata propia, las cuentas ni las finanzas del lector: la guía es cómo ayudar a quien apuesta.
 
-El disclaimer no es un pie de marketing: aclara que no diagnostica ni sustituye tratamiento.
+No diagnosticar. No inflar autoridad. Credencial verificable: psicólogo clínico. Foto profesional (`/yo.png`, hoy en blanco y negro). El disclaimer aclara que no diagnostica ni sustituye tratamiento.
+
+Botón en toda la página: Recibir la guía gratis.
 
 ### Criterios previos entre landing y ad
 
@@ -133,78 +135,97 @@ El disclaimer no es un pie de marketing: aclara que no diagnostica ni sustituye 
 
 Orden fijo:
 
-Hero → Problema → Qué aprenderá → Para quién → Autoridad → CTA → Footer
+Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Para quién → FAQ → CTA → Footer
 
 ## 1. Hero
 
-- Headline: Qué hacer cuando las apuestas empiezan a afectar a una familia
-- Subheadline: Una guía gratuita con 7 decisiones importantes sobre dinero, límites, confianza y recaídas para familiares y personas cercanas.
-- Visual/mockup: Portada editorial del PDF. Mismo texto que la imagen del anuncio. Sin casino, ruleta ni dramatización.
-- Formulario: Email
-- CTA principal: RECIBIR GUÍA GRATIS
-- Nota bajo el CTA: Material elaborado por psicólogo clínico. Acceso inmediato.
+- Headline: Ayudar a quien apuesta sin hacerte cargo de todo
+- Subheadline: Guía gratuita en PDF para parejas y familiares de alguien que apuesta. Las 7 decisiones que más cuestan: qué responder cuando pide plata, si cubrir una deuda, qué hacer con las mentiras y cómo actuar si recae.
+- Miniatura: placeholder de portada (72 px) + PDF de 10 páginas · Descarga inmediata
+- Formulario: email con etiqueta visible "Tu email"
+- CTA: Recibir la guía gratis
+- Microcopy: La guía te llega por correo desde Gonzalo Pedrosa. Después te escribo sobre este tema y puedes darte de baja con un clic. Privacidad.
+- Autoridad: foto 40 px + Gonzalo Pedrosa, psicólogo clínico
+- Ángulo por defecto del envío: B. El parámetro `a` sigue marcando de qué anuncio vino el lead.
 
-## 2. Problema / identificación
+## 2. Validación
 
-- Título: Cuando intentar ayudar empieza a generar más preguntas que respuestas
-- Texto:
-  Frente a un problema de apuestas, saber que “hay que poner límites” o que “la persona necesita ayuda” no siempre resuelve las decisiones cotidianas.
-  ¿Qué ocurre cuando pide dinero nuevamente? ¿Conviene cubrir una deuda? ¿Cómo distinguir una promesa de un cambio real? ¿Qué hacer si aparece otra recaída?
-  La guía organiza estas situaciones para ayudarte a entender qué aspectos están bajo el control de la familia y cuáles dependen de la persona que apuesta.
+- Título: Querer ayudar y no saber por dónde empezar
+- Líneas:
+  - Te pide plata para una deuda más, la última.
+  - Prometió que no iba a volver a pasar.
+  - Descubriste mentiras y no sabes qué creerle.
+  - Sientes que eres la única persona que lo sabe.
+- Destacado: Esta guía no va a hacer que deje de apostar. Eso no depende de ti. Lo que sí depende de ti es cómo ayudas, qué límites pones y qué dejas de cubrir.
 
-## 3. Qué aprenderá
+## 3. Las 7 decisiones
 
-- Intro: En esta guía encontrarás:
-- Bullets:
-  - Cómo diferenciar ayudar de hacerse cargo de las consecuencias.
-  - Qué considerar antes de prestar dinero o cubrir una deuda.
-  - Por qué un límite útil no consiste en intentar controlar a la otra persona.
-  - En qué fijarse cuando existen promesas de cambio después de mentiras o recaídas.
-  - Qué aspectos pueden ayudar a reconstruir la confianza gradualmente.
-  - Cómo pensar una recaída sin volver inmediatamente a las mismas dinámicas.
-  - Qué puede hacer la familia cuando la persona no quiere buscar ayuda.
-- CTA: QUIERO RECIBIR LA GUÍA
+- Título: Las 7 decisiones que vas a poder tomar con más claridad
+- Ítems:
+  1. Ayudar o hacerte cargo. Cómo distinguir cuándo tu ayuda sostiene el problema.
+  2. Prestar o no prestar. Qué pensar antes de pasar plata o cubrir una deuda, y qué hacer en su lugar.
+  3. Qué límite poner. Uno que sirva sin convertirte en su policía.
+  4. Creerle o no. En qué fijarte cuando promete cambiar después de mentiras o recaídas.
+  5. Volver a confiar. Qué señales permiten hacerlo de a poco, y cuáles todavía no.
+  6. Qué hacer si recae. Cómo responder sin volver al mismo ciclo de siempre.
+  7. Qué hacer si no quiere ayuda. Lo que sí puedes hacer tú aunque no lo admita.
+- CTA a `#recibir`: Recibir la guía gratis
 
-## 4. Para quién es
+## 4. Vista previa del PDF
 
-- Título: Esta guía puede ser útil para:
-- Texto: Familiares, parejas y personas cercanas que están enfrentando las consecuencias de las apuestas de alguien importante para ellos y necesitan ordenar qué hacer frente al dinero, los límites, la confianza y posibles recaídas.
-- Aclaración: No es una guía para diagnosticar a otra persona ni sustituye un tratamiento psicológico. Es material psicoeducativo dirigido a familiares y personas cercanas.
+- Título: Así se ve por dentro
+- Dos placeholders A4 hasta tener capturas reales
+- Pie: PDF de 10 páginas.
 
 ## 5. Autoridad / confianza
 
-- Foto: profesional (`/yo.png`)
-- Quién lo creó: Elaborada por Gonzalo Pedrosa
-- Credencial: Psicólogo clínico.
-- Motivo: La guía reúne principios psicológicos y herramientas prácticas para ayudar a familiares a comprender su propio rol frente a problemas relacionados con las apuestas, sin asumir la responsabilidad por la recuperación de otra persona.
+- Foto: 160 px, `sizes="160px"`, `/yo.png`
+- Título: Quién escribe esta guía
+- Texto: Soy Gonzalo Pedrosa, psicólogo clínico. Escribí esta guía para parejas y familiares que quieren ayudar a alguien que apuesta y no saben por dónde empezar. Reúne principios psicológicos y herramientas prácticas para acompañar sin asumir la responsabilidad por la recuperación de otra persona.
+- Segunda línea: Es un enfoque psicológico y profesional, sin contenido religioso. Puede complementar un grupo de apoyo, no lo reemplaza.
 
-## 6. CTA final
+## 6. Para quién es
 
-- Texto:
-  No necesitas tener todas las respuestas hoy.
-  Empieza por entender las decisiones que sí están bajo tu control.
-  Recibe gratis la guía de 7 decisiones para familiares.
-- Formulario: Email
-- Botón: RECIBIR GUÍA GRATIS
+- Para ti si eres pareja, hija o hijo, madre, padre o alguien cercano a una persona que apuesta. No necesitas que la otra persona admita el problema.
+- No es para diagnosticar a nadie ni reemplaza un tratamiento psicológico. Es material psicoeducativo.
 
-## 7. Footer mínimo
+## 7. Preguntas frecuentes
 
+- ¿Alguien más se va a enterar? No. La guía llega solo a tu correo, desde Gonzalo Pedrosa, y tu email no queda guardado en este dispositivo.
+- ¿Me van a llenar de correos? No. Después de la guía te escribo sobre este tema, y puedes darte de baja con un clic en cualquier correo.
+- ¿Sirve si no admite que tiene un problema? Sí. La guía se centra en cómo puedes ayudar tú, no en convencer a la otra persona.
+- ¿Tiene un enfoque religioso o de 12 pasos? No. Es material psicológico y laico. Si un grupo de apoyo te sirve, esta guía lo puede complementar.
+- ¿Me va a decir si lo dejo o me quedo? No. La guía no decide por ti. Te ayuda a ordenar cómo ayudar y qué límites poner.
+- ¿Reemplaza una terapia? No. Es un primer paso para ordenar decisiones. Si necesitas acompañamiento, puedes consultar con un profesional.
+
+## 8. CTA final
+
+- Título: No necesitas tener todas las respuestas hoy.
+- Texto: Empieza por las decisiones que sí dependen de ti.
+- Formulario igual al del hero
+- Botón: Recibir la guía gratis
+
+## 9. Footer mínimo
+
+- © 2026 Gonzalo Pedrosa, psicólogo clínico · Privacidad · Términos
+- Si hay riesgo inmediato para alguien, contacta a los servicios de emergencia de tu país.
 - Privacidad: /privacidad
 - Términos: /terminos
-- Disclaimer: No es una guía para diagnosticar a otra persona ni sustituye un tratamiento psicológico. Es material psicoeducativo dirigido a familiares y personas cercanas.
 
-## 8. Thank-you (`/captacion/gracias`)
+## 10. Thank-you (`/captacion/gracias`)
 
 Acá cambia el nivel de conciencia. Ya se presentó el enfoque. El programa de $250 no se muestra.
 
-- Texto: Entender qué hacer es el primer paso. Aplicarlo cuando vuelve a pedir dinero, aparece otra mentira o se incumple un límite suele ser más difícil.
-- Oferta: Kit práctico para familiares — $27
-- Distinción:
-  - PDF gratis: qué decisiones tengo que tomar.
-  - Kit: cómo ejecutar esas decisiones.
-- Checkout: todavía no está conectado. No inventar un pago ni un botón que lleve a otro producto.
+- H1: Listo. Tu guía va en camino.
+- Te la enviamos por correo desde Gonzalo Pedrosa. Si no la ves en 5 minutos, revisa Promociones o Spam.
+- Botón: Descargar ahora. La URL del PDF todavía no está.
+- Texto: Entender qué hacer es el primer paso. Aplicarlo cuando vuelve a pedir plata, aparece otra mentira o se incumple un límite suele ser más difícil.
+- Oferta: Kit práctico para familiares
+- Distinción: La guía gratis te ayuda a ver qué decisiones tomar. El kit te enseña cómo llevarlas a la práctica.
+- Precio: $27.990 CLP
+- Botón: Comprar el kit. El link de pago todavía no está.
 
-## 9. Métricas (`/captacion/metricas`)
+## 11. Métricas (`/captacion/metricas`)
 
 Sirve para juzgar si el funnel anda. Primero documenta los niveles de conciencia que apunta cada pieza. Los números se cargan para decidir, no para proyectar en el aire.
 
@@ -226,7 +247,7 @@ No se juzga un paso con el del siguiente. Si el ad no trae clics, no se toca la 
 
 5. **Thank-you → Kit $27.** Aquí cambia el nivel de conciencia. Anda si el 3% o más de las vistas del Kit compra, y el CPA del Kit queda por debajo de $27 (el anuncio se paga). Menos de 1% con 80 vistas o más: el salto al producto no anda. No se habla del programa de $250 para tapar eso. Mientras no haya checkout, este paso no se puede declarar andando.
 
-## 10. PostHog
+## 12. PostHog
 
 Mide el funnel en el sitio. El clic del anuncio se mira en Meta. No se manda el email a PostHog.
 

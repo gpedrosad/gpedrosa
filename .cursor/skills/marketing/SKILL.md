@@ -30,7 +30,7 @@ Antes de escribir el anuncio o la landing, aplicar los criterios de `marketing.m
 - No inventar copy. Si un campo de `marketing.md` está vacío, la landing muestra el nombre del bloque, sin texto de relleno.
 - No usar voseo. Tú: puedes, deja, recibe. No: podés, dejá, recibí. Vale para ads, landing, thank-you, formularios y emails.
 - Al recibir contenido, escribirlo primero en `marketing.md` y después reflejarlo en la página.
-- Orden fijo: Hero → Problema → Beneficios → Qué recibes → Autoridad → CTA → Footer.
+- Orden fijo: Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Para quién → FAQ → CTA → Footer.
 - No agregar bloques, claims, credenciales ni disclaimers que no estén en `marketing.md`.
 - Privacidad y términos apuntan a `/privacidad` y `/terminos` salvo que `marketing.md` diga otra cosa.
 - El disclaimer del footer solo se muestra cuando ese campo tiene texto.

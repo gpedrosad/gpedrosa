@@ -177,9 +177,8 @@ export default function Simulador() {
       const siguientes = [
         {
           t: new Date().toISOString(),
-          email,
+          evento: "captacion_email",
           angulo,
-          paso: "lead" as const,
           simulado: true,
         },
         ...leerEventos(),
@@ -360,8 +359,8 @@ export default function Simulador() {
           <h2 className="text-xl font-semibold tracking-[-0.02em]">Recorridos de este navegador</h2>
           <ul className="mt-4 space-y-2 text-sm text-neutral-700">
             {eventos.slice(0, 12).map((evento) => (
-              <li key={`${evento.t}-${evento.paso}-${evento.email}`}>
-                {evento.paso === "lead" ? "Email" : "Kit $27"} · ad {evento.angulo} · {evento.email}
+              <li key={`${evento.t}-${evento.evento}-${evento.angulo}`}>
+                {evento.evento === "captacion_kit" ? "Kit $27" : "Email"} · ad {evento.angulo}
               </li>
             ))}
           </ul>

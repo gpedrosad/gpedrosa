@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { captar } from "@/lib/posthog-captacion";
@@ -17,8 +18,8 @@ type Props = {
 export default function LeadForm({
   id = "lead",
   resource = "7-decisiones",
-  angulo = "A",
-  button = "RECIBIR GUÍA GRATIS",
+  angulo = "B",
+  button = "Recibir la guía gratis",
 }: Props) {
   const router = useRouter();
   const [state, setState] = useState<FormState>("idle");
@@ -49,9 +50,8 @@ export default function LeadForm({
         const eventos = leerEventos();
         eventos.unshift({
           t: new Date().toISOString(),
-          email: String(data.get("email") ?? ""),
+          evento: "captacion_email",
           angulo,
-          paso: "lead",
           simulado: Boolean(result.simulado),
         });
         guardarEventos(eventos.slice(0, 50));
@@ -60,6 +60,7 @@ export default function LeadForm({
           (window as typeof window & { fbq: (...args: unknown[]) => void }).fbq("track", "Lead");
         }
       }
+      setState("sent");
       router.push("/captacion/gracias");
     } catch (error) {
       setState("error");
@@ -68,9 +69,9 @@ export default function LeadForm({
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3">
-      <label htmlFor={`${id}-email`} className="sr-only">
-        Email
+    <form method="post" action="/api/captacion" onSubmit={submit} className="space-y-2.5">
+      <label htmlFor={`${id}-email`} className="block text-sm font-medium text-neutral-800">
+        Tu email
       </label>
       <input
         id={`${id}-email`}
@@ -78,9 +79,10 @@ export default function LeadForm({
         type="email"
         required
         autoComplete="email"
-        placeholder="Email"
-        className="h-12 w-full border border-neutral-300 bg-white px-3 text-base outline-none focus:border-neutral-900"
+        className="h-11 w-full border border-neutral-500 bg-white px-3 text-base outline-none focus:border-neutral-900"
       />
+      <input type="hidden" name="resource" value={resource} />
+      <input type="hidden" name="angulo" value={angulo} />
       <div className="hidden" aria-hidden="true">
         <label htmlFor={`${id}-website`}>Sitio web</label>
         <input id={`${id}-website`} name="website" type="text" tabIndex={-1} autoComplete="off" />
@@ -88,20 +90,19 @@ export default function LeadForm({
       <button
         type="submit"
         disabled={state === "sending" || state === "sent"}
-        className="flex h-12 w-full items-center justify-center bg-neutral-900 px-4 text-sm font-semibold tracking-wide text-white disabled:opacity-60"
+        className="flex h-11 w-full items-center justify-center bg-neutral-900 px-4 text-sm font-semibold text-white disabled:opacity-60"
       >
         {state === "sending" ? "Enviando…" : state === "sent" ? "Guía enviada" : button}
       </button>
-      <p className="text-xs leading-5 text-neutral-500">
-        Te enviaremos este recurso y comunicaciones relacionadas. Puedes dejar de recibirlas cuando quieras.{" "}
-        <a href="/privacidad" className="underline underline-offset-2">
-          Privacidad
-        </a>
-        .
+      <p className="text-xs leading-4 text-neutral-600">
+        La guía te llega por correo desde Gonzalo Pedrosa. Después te escribo sobre este tema y puedes
+        darte de baja con un clic.{" "}
+        <Link href="/privacidad" prefetch={false} className="underline underline-offset-2">
+          Privacidad</Link>.
       </p>
       <div
         aria-live="polite"
-        className={`min-h-5 text-sm ${state === "error" ? "text-red-700" : "text-neutral-700"}`}
+        className={`text-sm ${state === "error" ? "text-red-700" : "text-neutral-700"}`}
       >
         {message}
       </div>

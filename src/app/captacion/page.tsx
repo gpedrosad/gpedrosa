@@ -4,52 +4,107 @@ import Link from "next/link";
 import LeadForm from "./LeadForm";
 import Rastreo from "./Rastreo";
 
+const TITULO = "Guía gratuita para familiares: 7 decisiones sobre plata, límites y recaídas";
+const DESCRIPCION = "Material psicoeducativo elaborado por un psicólogo clínico.";
+
 export const metadata: Metadata = {
-  title: "Guía gratuita para familiares | 7 decisiones",
-  description:
-    "Una guía gratuita con 7 decisiones importantes sobre dinero, límites, confianza y recaídas para familiares y personas cercanas.",
+  title: TITULO,
+  description: DESCRIPCION,
   robots: { index: false, follow: false },
+  alternates: { canonical: "/captacion" },
   openGraph: {
-    title: "Qué hacer cuando las apuestas empiezan a afectar a una familia",
-    description:
-      "Una guía gratuita con 7 decisiones importantes sobre dinero, límites, confianza y recaídas.",
+    title: TITULO,
+    description: DESCRIPCION,
     type: "website",
+    url: "https://gpedrosa.cl/captacion",
+  },
+  twitter: {
+    title: TITULO,
+    description: DESCRIPCION,
   },
 };
 
-const aprendizajes = [
-  "Cómo diferenciar ayudar de hacerse cargo de las consecuencias.",
-  "Qué considerar antes de prestar dinero o cubrir una deuda.",
-  "Por qué un límite útil no consiste en intentar controlar a la otra persona.",
-  "En qué fijarse cuando existen promesas de cambio después de mentiras o recaídas.",
-  "Qué aspectos pueden ayudar a reconstruir la confianza gradualmente.",
-  "Cómo pensar una recaída sin volver inmediatamente a las mismas dinámicas.",
-  "Qué puede hacer la familia cuando la persona no quiere buscar ayuda.",
+const situacion = [
+  "Te pide plata para una deuda más, la última.",
+  "Prometió que no iba a volver a pasar.",
+  "Descubriste mentiras y no sabes qué creerle.",
+  "Sientes que eres la única persona que lo sabe.",
 ];
 
-function Mockup() {
-  return (
-    <div className="border border-neutral-300 bg-[#f4f1ea] p-8 shadow-sm sm:p-10">
-      <p className="text-[11px] font-semibold tracking-[0.22em] text-neutral-500">GUÍA GRATUITA</p>
-      <h2 className="mt-8 text-[1.65rem] font-semibold leading-[1.15] tracking-[-0.03em] text-neutral-900 sm:text-[1.85rem]">
-        Cuando las apuestas
-        <br />
-        empiezan a afectar
-        <br />a una familia
-      </h2>
-      <p className="mt-6 max-w-[16rem] text-sm leading-6 text-neutral-700">
-        7 decisiones importantes sobre dinero, límites, confianza y recaídas
-      </p>
-      <div className="mt-10 border-t border-neutral-300 pt-4 text-xs leading-5 text-neutral-600">
-        Elaborada por psicólogo clínico
-      </div>
-    </div>
-  );
-}
+const decisiones = [
+  {
+    titulo: "Ayudar o hacerte cargo.",
+    texto: "Cómo distinguir cuándo tu ayuda sostiene el problema.",
+  },
+  {
+    titulo: "Prestar o no prestar.",
+    texto: "Qué pensar antes de pasar plata o cubrir una deuda, y qué hacer en su lugar.",
+  },
+  {
+    titulo: "Qué límite poner.",
+    texto: "Uno que sirva sin convertirte en su policía.",
+  },
+  {
+    titulo: "Creerle o no.",
+    texto: "En qué fijarte cuando promete cambiar después de mentiras o recaídas.",
+  },
+  {
+    titulo: "Volver a confiar.",
+    texto: "Qué señales permiten hacerlo de a poco, y cuáles todavía no.",
+  },
+  {
+    titulo: "Qué hacer si recae.",
+    texto: "Cómo responder sin volver al mismo ciclo de siempre.",
+  },
+  {
+    titulo: "Qué hacer si no quiere ayuda.",
+    texto: "Lo que sí puedes hacer tú aunque no lo admita.",
+  },
+];
+
+const preguntas = [
+  {
+    q: "¿Alguien más se va a enterar?",
+    a: "No. La guía llega solo a tu correo, desde Gonzalo Pedrosa, y tu email no queda guardado en este dispositivo.",
+  },
+  {
+    q: "¿Me van a llenar de correos?",
+    a: "No. Después de la guía te escribo sobre este tema, y puedes darte de baja con un clic en cualquier correo.",
+  },
+  {
+    q: "¿Sirve si no admite que tiene un problema?",
+    a: "Sí. La guía se centra en cómo puedes ayudar tú, no en convencer a la otra persona.",
+  },
+  {
+    q: "¿Tiene un enfoque religioso o de 12 pasos?",
+    a: "No. Es material psicológico y laico. Si un grupo de apoyo te sirve, esta guía lo puede complementar.",
+  },
+  {
+    q: "¿Me va a decir si lo dejo o me quedo?",
+    a: "No. La guía no decide por ti. Te ayuda a ordenar cómo ayudar y qué límites poner.",
+  },
+  {
+    q: "¿Reemplaza una terapia?",
+    a: "No. Es un primer paso para ordenar decisiones. Si necesitas acompañamiento, puedes consultar con un profesional.",
+  },
+];
 
 function anguloDe(valor: string | string[] | undefined) {
   const marca = Array.isArray(valor) ? valor[0] : valor;
-  return marca === "B" || marca === "C" ? marca : "A";
+  return marca === "A" || marca === "C" ? marca : "B";
+}
+
+function MiniaturaPdf() {
+  return (
+    <div className="flex items-center gap-3">
+      <div
+        className="shrink-0 border border-neutral-300 bg-[#f4f1ea]"
+        style={{ width: 51, height: 72 }}
+        aria-hidden="true"
+      />
+      <p className="text-sm leading-5 text-neutral-700">PDF de 10 páginas · Descarga inmediata</p>
+    </div>
+  );
 }
 
 export default async function CaptacionPage({
@@ -64,114 +119,157 @@ export default async function CaptacionPage({
     <div className="min-h-screen bg-[#faf9f6] text-neutral-900">
       <Rastreo evento="captacion_landing" angulo={angulo} />
       <header className="border-b border-neutral-200">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center px-5">
-          <Link href="/" className="text-sm font-medium">
-            Gonzalo Pedrosa
-          </Link>
+        <div className="mx-auto flex h-12 w-full max-w-xl items-center px-5 sm:h-14">
+          <p className="text-sm font-medium">Gonzalo Pedrosa · Psicólogo clínico</p>
         </div>
       </header>
 
       <main>
-        <section className="mx-auto grid w-full max-w-5xl gap-12 px-5 py-14 sm:py-20 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
-          <div>
-            <h1 className="text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl">
-              Qué hacer cuando las apuestas empiezan a afectar a una familia
-            </h1>
-            <p className="mt-5 max-w-xl text-base leading-7 text-neutral-700 sm:text-lg">
-              Una guía gratuita con 7 decisiones importantes sobre dinero, límites, confianza y
-              recaídas para familiares y personas cercanas.
-            </p>
-            <div className="mt-8 max-w-md">
-              <LeadForm id="hero" angulo={angulo} />
-            </div>
-            <p className="mt-3 text-sm text-neutral-600">
-              Material elaborado por psicólogo clínico. Acceso inmediato.
-            </p>
+        <section className="mx-auto w-full max-w-xl px-5 pt-4 pb-5 sm:pt-10 sm:pb-12">
+          <h1 className="text-[1.5rem] font-semibold leading-[1.2] tracking-[-0.03em] sm:text-4xl sm:leading-tight">
+            Ayudar a quien apuesta sin hacerte cargo de todo
+          </h1>
+          <p className="mt-2.5 text-sm leading-5 text-neutral-700 sm:mt-5 sm:text-base sm:leading-7">
+            Guía gratuita en PDF para parejas y familiares de alguien que apuesta. Las 7 decisiones que
+            más cuestan: qué responder cuando pide plata, si cubrir una deuda, qué hacer con las
+            mentiras y cómo actuar si recae.
+          </p>
+          <div className="mt-3 sm:mt-6">
+            <MiniaturaPdf />
           </div>
-          <Mockup />
+          <div className="mt-3 sm:mt-6">
+            <LeadForm id="hero" angulo={angulo} />
+          </div>
+          <div className="mt-3 flex items-center gap-2.5">
+            <Image
+              src="/yo.png"
+              alt=""
+              width={40}
+              height={40}
+              sizes="40px"
+              className="h-10 w-10 rounded-full object-cover"
+            />
+            <p className="text-sm text-neutral-700">Gonzalo Pedrosa, psicólogo clínico</p>
+          </div>
         </section>
 
         <section className="border-t border-neutral-200 bg-white">
-          <div className="mx-auto w-full max-w-3xl px-5 py-14 sm:py-16">
+          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
             <h2 className="text-2xl font-semibold leading-snug tracking-[-0.02em] sm:text-3xl">
-              Cuando intentar ayudar empieza a generar más preguntas que respuestas
+              Querer ayudar y no saber por dónde empezar
             </h2>
-            <div className="mt-6 space-y-4 text-base leading-7 text-neutral-700">
-              <p>
-                Frente a un problema de apuestas, saber que “hay que poner límites” o que “la
-                persona necesita ayuda” no siempre resuelve las decisiones cotidianas.
-              </p>
-              <p>
-                ¿Qué ocurre cuando pide dinero nuevamente? ¿Conviene cubrir una deuda? ¿Cómo
-                distinguir una promesa de un cambio real? ¿Qué hacer si aparece otra recaída?
-              </p>
-              <p>
-                La guía organiza estas situaciones para ayudarte a entender qué aspectos están bajo
-                el control de la familia y cuáles dependen de la persona que apuesta.
-              </p>
-            </div>
+            <ul className="mt-6 space-y-2 text-base leading-7 text-neutral-700">
+              {situacion.map((linea) => (
+                <li key={linea} className="flex gap-2">
+                  <span className="text-neutral-400" aria-hidden="true">
+                    -
+                  </span>
+                  <span>{linea}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-8 text-lg font-semibold leading-7 text-neutral-900">
+              Esta guía no va a hacer que deje de apostar. Eso no depende de ti. Lo que sí depende de
+              ti es cómo ayudas, qué límites pones y qué dejas de cubrir.
+            </p>
           </div>
         </section>
 
         <section className="border-t border-neutral-200">
-          <div className="mx-auto w-full max-w-3xl px-5 py-14 sm:py-16">
-            <h2 className="text-2xl font-semibold tracking-[-0.02em]">En esta guía encontrarás:</h2>
-            <ul className="mt-6 list-disc space-y-3 pl-5 text-base leading-7 text-neutral-700">
-              {aprendizajes.map((item) => (
-                <li key={item}>{item}</li>
+          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
+            <h2 className="text-2xl font-semibold leading-snug tracking-[-0.02em] sm:text-3xl">
+              Las 7 decisiones que vas a poder tomar con más claridad
+            </h2>
+            <ol className="mt-6 list-decimal space-y-4 pl-5 text-base leading-7 text-neutral-700">
+              {decisiones.map((item) => (
+                <li key={item.titulo}>
+                  <span className="font-semibold text-neutral-900">{item.titulo}</span> {item.texto}
+                </li>
               ))}
-            </ul>
+            </ol>
             <a
               href="#recibir"
-              className="mt-8 inline-flex h-12 items-center justify-center bg-neutral-900 px-5 text-sm font-semibold tracking-wide text-white"
+              className="mt-8 inline-flex h-11 items-center justify-center bg-neutral-900 px-5 text-sm font-semibold text-white"
             >
-              QUIERO RECIBIR LA GUÍA
+              Recibir la guía gratis
             </a>
           </div>
         </section>
 
         <section className="border-t border-neutral-200 bg-white">
-          <div className="mx-auto w-full max-w-3xl px-5 py-14 sm:py-16">
-            <h2 className="text-2xl font-semibold tracking-[-0.02em]">Esta guía puede ser útil para:</h2>
-            <p className="mt-5 text-base leading-7 text-neutral-700">
-              Familiares, parejas y personas cercanas que están enfrentando las consecuencias de
-              las apuestas de alguien importante para ellos y necesitan ordenar qué hacer frente al
-              dinero, los límites, la confianza y posibles recaídas.
-            </p>
-            <p className="mt-5 text-sm leading-6 text-neutral-600">
-              No es una guía para diagnosticar a otra persona ni sustituye un tratamiento
-              psicológico. Es material psicoeducativo dirigido a familiares y personas cercanas.
-            </p>
+          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
+            <h2 className="text-2xl font-semibold tracking-[-0.02em]">Así se ve por dentro</h2>
+            {/* TODO: reemplazar por capturas reales del PDF */}
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5">
+              <div className="aspect-[210/297] border border-neutral-300 bg-[#f4f1ea]" />
+              <div className="aspect-[210/297] border border-neutral-300 bg-[#f4f1ea]" />
+            </div>
+            <p className="mt-3 text-sm text-neutral-600">PDF de 10 páginas.</p>
           </div>
         </section>
 
         <section className="border-t border-neutral-200">
-          <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-5 py-14 sm:flex-row sm:items-start sm:gap-10 sm:py-16">
-            <div className="relative h-28 w-28 shrink-0 overflow-hidden bg-neutral-200">
-              <Image src="/yo.png" alt="Gonzalo Pedrosa" fill className="object-cover" />
-            </div>
+          <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-5 py-12 sm:flex-row sm:items-start sm:gap-8 sm:py-16">
+            <Image
+              src="/yo.png"
+              alt="Gonzalo Pedrosa"
+              width={160}
+              height={160}
+              sizes="160px"
+              className="h-40 w-40 shrink-0 object-cover"
+            />
             <div>
-              <p className="text-lg font-semibold">Elaborada por Gonzalo Pedrosa</p>
-              <p className="mt-1 text-sm text-neutral-600">Psicólogo clínico.</p>
+              <h2 className="text-2xl font-semibold tracking-[-0.02em]">Quién escribe esta guía</h2>
               <p className="mt-4 text-base leading-7 text-neutral-700">
-                La guía reúne principios psicológicos y herramientas prácticas para ayudar a
-                familiares a comprender su propio rol frente a problemas relacionados con las
-                apuestas, sin asumir la responsabilidad por la recuperación de otra persona.
+                Soy Gonzalo Pedrosa, psicólogo clínico. Escribí esta guía para parejas y familiares que
+                quieren ayudar a alguien que apuesta y no saben por dónde empezar. Reúne principios
+                psicológicos y herramientas prácticas para acompañar sin asumir la responsabilidad por
+                la recuperación de otra persona.
+              </p>
+              <p className="mt-4 text-base leading-7 text-neutral-700">
+                Es un enfoque psicológico y profesional, sin contenido religioso. Puede complementar un
+                grupo de apoyo, no lo reemplaza.
               </p>
             </div>
           </div>
         </section>
 
-        <section id="recibir" className="border-t border-neutral-200 bg-white">
-          <div className="mx-auto w-full max-w-md px-5 py-14 sm:py-16">
+        <section className="border-t border-neutral-200 bg-white">
+          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
+            <p className="text-base leading-7 text-neutral-700">
+              Para ti si eres pareja, hija o hijo, madre, padre o alguien cercano a una persona que
+              apuesta. No necesitas que la otra persona admita el problema.
+            </p>
+            <p className="mt-4 text-base leading-7 text-neutral-700">
+              No es para diagnosticar a nadie ni reemplaza un tratamiento psicológico. Es material
+              psicoeducativo.
+            </p>
+          </div>
+        </section>
+
+        <section className="border-t border-neutral-200">
+          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
+            <h2 className="text-2xl font-semibold tracking-[-0.02em]">Preguntas frecuentes</h2>
+            <div className="mt-6">
+              {preguntas.map((item) => (
+                <details key={item.q} className="border-b border-neutral-200">
+                  <summary className="flex min-h-11 cursor-pointer items-center py-3 text-base font-semibold leading-6">
+                    {item.q}
+                  </summary>
+                  <p className="pb-4 text-base leading-7 text-neutral-700">{item.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="recibir" className="scroll-mt-4 border-t border-neutral-200 bg-white">
+          <div className="mx-auto w-full max-w-md px-5 py-12 sm:py-16">
             <h2 className="text-2xl font-semibold leading-snug tracking-[-0.02em] sm:text-3xl">
               No necesitas tener todas las respuestas hoy.
             </h2>
             <p className="mt-4 text-base leading-7 text-neutral-700">
-              Empieza por entender las decisiones que sí están bajo tu control.
-            </p>
-            <p className="mt-2 text-base leading-7 text-neutral-700">
-              Recibe gratis la guía de 7 decisiones para familiares.
+              Empieza por las decisiones que sí dependen de ti.
             </p>
             <div className="mt-8">
               <LeadForm id="final" angulo={angulo} />
@@ -181,16 +279,20 @@ export default async function CaptacionPage({
       </main>
 
       <footer className="border-t border-neutral-200">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-5 py-8 text-sm text-neutral-600 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Gonzalo Pedrosa</p>
-          <div className="flex gap-5">
-            <Link href="/privacidad" className="hover:text-neutral-900">
+        <div className="mx-auto w-full max-w-xl px-5 py-8 text-sm leading-6 text-neutral-600">
+          <p>
+            © 2026 Gonzalo Pedrosa, psicólogo clínico ·{" "}
+            <Link href="/privacidad" prefetch={false} className="hover:text-neutral-900">
               Privacidad
             </Link>
-            <Link href="/terminos" className="hover:text-neutral-900">
+            {" · "}
+            <Link href="/terminos" prefetch={false} className="hover:text-neutral-900">
               Términos
             </Link>
-          </div>
+          </p>
+          <p className="mt-3">
+            Si hay riesgo inmediato para alguien, contacta a los servicios de emergencia de tu país.
+          </p>
         </div>
       </footer>
     </div>
