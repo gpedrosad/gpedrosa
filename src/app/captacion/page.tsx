@@ -97,10 +97,12 @@ function anguloDe(valor: string | string[] | undefined) {
 function MiniaturaPdf() {
   return (
     <div className="flex items-center gap-3">
-      <div
-        className="shrink-0 border border-neutral-300 bg-[#f4f1ea]"
-        style={{ width: 51, height: 72 }}
-        aria-hidden="true"
+      <img
+        src="/captacion/guia-portada.svg"
+        alt=""
+        width={51}
+        height={72}
+        className="h-[72px] w-[51px] border border-neutral-300 bg-[#f4f1ea] object-cover"
       />
       <p className="text-sm leading-5 text-neutral-700">PDF de 10 páginas · Descarga inmediata</p>
     </div>
@@ -199,10 +201,21 @@ export default async function CaptacionPage({
         <section className="border-t border-neutral-200 bg-white">
           <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
             <h2 className="text-2xl font-semibold tracking-[-0.02em]">Así se ve por dentro</h2>
-            {/* TODO: reemplazar por capturas reales del PDF */}
             <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5">
-              <div className="aspect-[210/297] border border-neutral-300 bg-[#f4f1ea]" />
-              <div className="aspect-[210/297] border border-neutral-300 bg-[#f4f1ea]" />
+              <img
+                src="/captacion/guia-portada.svg"
+                alt="Portada de la guía gratuita"
+                width={420}
+                height={594}
+                className="aspect-[210/297] w-full border border-neutral-300 bg-[#f4f1ea] object-cover"
+              />
+              <img
+                src="/captacion/guia-interior.svg"
+                alt="Página interior de la guía: las 7 decisiones"
+                width={420}
+                height={594}
+                className="aspect-[210/297] w-full border border-neutral-300 bg-[#faf9f6] object-cover"
+              />
             </div>
             <p className="mt-3 text-sm text-neutral-600">PDF de 10 páginas.</p>
           </div>
