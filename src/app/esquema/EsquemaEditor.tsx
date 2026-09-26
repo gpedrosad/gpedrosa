@@ -820,7 +820,7 @@ export default function EsquemaEditor({
               </ol>
               <p className="mt-4 font-medium">Prompt sugerido</p>
               <p className="mt-2 rounded-xl bg-white p-3 text-neutral-700">
-                “Leé /api/esquema/formato. Creá con POST /api/esquemas. Usá el feedback de conexiones para mejorar ese mismo id con PATCH y solo los campos que cambian. Borrá con DELETE. No uses la pantalla.”
+                “Lee /api/esquema/formato. Crea con POST /api/esquemas. Usa el feedback de conexiones para mejorar ese mismo id con PATCH y solo los campos que cambian. Borra con DELETE. No uses la pantalla. El copy no usa voseo.”
               </p>
               <details className="mt-4">
                 <summary className="cursor-pointer font-medium">Reglas del formato</summary>

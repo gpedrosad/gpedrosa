@@ -7,7 +7,6 @@ import type {
   PiezaEnlace,
 } from "./esquema-types";
 import {
-  asegurarSemilla,
   guardarFlujo,
   insertarFlujo,
   listarFlujos,
@@ -45,12 +44,10 @@ export function conFlujo<T>(id: string, fn: () => Promise<T>) {
 }
 
 export async function flujos() {
-  await asegurarSemilla();
   return listarFlujos();
 }
 
 async function idDeTrabajo() {
-  await asegurarSemilla();
   const lista = await listarFlujos();
   if (!lista.length) throw new Error("No hay flujos");
   const pedido = flujoPedido.getStore()?.trim();
@@ -135,7 +132,6 @@ export async function editarEsquemaSimple(
 export async function crearFlujo(titulo: string, texto?: string) {
   const nombre = titulo.trim();
   if (!nombre) throw new Error("El flujo necesita un nombre");
-  await asegurarSemilla();
   const usados = new Set((await listarFlujos()).map((flujo) => flujo.id));
   const id = idLibre(slug(nombre), usados);
   await insertarFlujo(id, nombre);

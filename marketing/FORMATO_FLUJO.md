@@ -18,7 +18,9 @@ Content-Type: application/json
 }
 ```
 
-`anuncio`, `h1`, `intro`, `valor` y `cta` son obligatorios. `titulo` es el nombre del flujo. Si no lo mandás, se usa la primera línea del anuncio.
+`anuncio`, `h1`, `intro`, `valor` y `cta` son obligatorios. `titulo` es el nombre del flujo. Si no lo mandas, se usa la primera línea del anuncio.
+
+El copy del anuncio y de la landing no usa voseo. Tú: puedes, deja, recibe. No: podés, dejá, recibí.
 
 La respuesta trae el esquema y el feedback de la IA para mejorarlo. No hagas otro POST para corregir: eso crea un flujo nuevo.
 
@@ -39,14 +41,14 @@ La respuesta trae el esquema y el feedback de la IA para mejorarlo. No hagas otr
 }
 ```
 
-Las conexiones son anuncio → h1 → intro → valor → cta. `puntuacion` va de 0 a 100. Usá `recomendacion` y `brechas` para reescribir solo esos campos.
+Las conexiones son anuncio → h1 → intro → valor → cta. `puntuacion` va de 0 a 100. Usa `recomendacion` y `brechas` para reescribir solo esos campos.
 
 ## Mejorar el mismo flujo
 
 PATCH {ORIGEN}/api/esquemas/{id}
 Content-Type: application/json
 
-Mandá únicamente los campos que cambian.
+Manda únicamente los campos que cambian.
 
 ```json
 {
