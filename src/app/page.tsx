@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa";
+
+export const metadata: Metadata = {
+  title: "Gonzalo Pedrosa",
+  description: "Acompañamiento online. Sesiones individuales de 50 minutos.",
+  twitter: {
+    title: "Gonzalo Pedrosa",
+    description: "Acompañamiento online.",
+  },
+};
 
 export default function Home() {
   return (

@@ -38,10 +38,9 @@ export default function Terminos() {
               2. Descripción del servicio
             </h2>
             <p className="text-gray-700 mb-4">
-              Este sitio web proporciona información sobre servicios de
-              acompañamiento online. Los servicios ofrecidos son de carácter
-              informativo y de acompañamiento, no constituyen servicios médicos,
-              psicológicos o terapéuticos profesionales.
+              Este sitio web informa sobre acompañamiento online. El servicio es
+              informativo y de acompañamiento. No reemplaza un servicio médico
+              ni un tratamiento.
             </p>
           </section>
 

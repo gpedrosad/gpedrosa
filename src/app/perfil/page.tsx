@@ -8,13 +8,15 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Gonzalo Pedrosa",
-    description:
-      "Modalidad 100% online.",
+    description: "Acompañamiento online. Sesiones individuales de 50 minutos.",
     openGraph: {
       title: "Gonzalo Pedrosa",
-      description:
-        "Más de 7 años de experiencia ofreciendo acompañamiento online",
+      description: "Acompañamiento online.",
       images: ["/yo.png"],
+    },
+    twitter: {
+      title: "Gonzalo Pedrosa",
+      description: "Acompañamiento online.",
     },
     robots: {
       index: true,

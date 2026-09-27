@@ -5,7 +5,7 @@ import LeadForm from "./LeadForm";
 import Rastreo from "./Rastreo";
 
 const TITULO = "Guía gratuita para familiares: 7 decisiones sobre plata, límites y recaídas";
-const DESCRIPCION = "Material psicoeducativo elaborado por un psicólogo clínico.";
+const DESCRIPCION = "Material psicoeducativo elaborado por un psicólogo.";
 
 export const metadata: Metadata = {
   title: TITULO,
@@ -148,7 +148,7 @@ export default async function CaptacionPage({
               <Image src="/yo.png" alt="" width={46} height={46} className="capture-avatar" />
               <p>
                 Elaborada por <strong>Gonzalo Pedrosa</strong>
-                <span>Psicólogo clínico</span>
+                <span>Psicólogo</span>
               </p>
             </div>
           </div>
@@ -268,7 +268,7 @@ export default async function CaptacionPage({
               Hola, soy <strong>Gonzalo.</strong>
             </h2>
             <p>
-              Soy psicólogo clínico. Escribí esta guía para parejas y familiares
+              Soy psicólogo. Escribí esta guía para parejas y familiares
               que quieren ayudar a alguien que apuesta y no saben por dónde empezar.
             </p>
             <p>

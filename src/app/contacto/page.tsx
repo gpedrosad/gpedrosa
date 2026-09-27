@@ -16,7 +16,7 @@ export default function Contacto() {
 
         <div className="prose prose-lg max-w-none">
           <p className="text-gray-600 mb-8 text-xl">
-            Estoy aquí para ayudarte. Puedes contactarme a través de los siguientes medios:
+            Medios de contacto y horarios para agendar o escribir.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
@@ -75,10 +75,10 @@ export default function Contacto() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Información importante</h2>
             <div className="bg-yellow-50 p-6 rounded-lg">
               <p className="text-gray-700 mb-4">
-                <strong>Nota:</strong> Los servicios ofrecidos son de acompañamiento online y no constituyen servicios médicos, psicológicos o terapéuticos profesionales.
+                <strong>Nota:</strong> Este sitio ofrece acompañamiento online. No reemplaza un servicio médico ni un tratamiento.
               </p>
               <p className="text-gray-700">
-                Si necesitas atención médica o psicológica urgente, te recomiendo contactar a los servicios de emergencia correspondientes.
+                Si hay una urgencia, contacta a los servicios de emergencia de tu país.
               </p>
             </div>
           </section>

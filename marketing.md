@@ -89,7 +89,7 @@ dinero, límites, confianza y recaídas
 
 GUÍA GRATUITA
 
-Elaborada por psicólogo clínico
+Elaborada por psicólogo
 ```
 
 ### Primary text del anuncio
@@ -120,7 +120,7 @@ Corta. El único trabajo es el email. En el hero no compite nada con el CTA. El 
 
 Español de Chile con tú. No voseo. No rayas largas. No prometer que la persona va a dejar de apostar. No hablar de proteger la plata propia, las cuentas ni las finanzas del lector: la guía es cómo ayudar a quien apuesta.
 
-No diagnosticar. No inflar autoridad. Credencial verificable: psicólogo clínico. Foto profesional (`/yo.png`, hoy en blanco y negro). El disclaimer aclara que no diagnostica ni sustituye tratamiento.
+No diagnosticar. No inflar autoridad. Credencial verificable: psicólogo. Foto profesional (`/yo.png`, hoy en blanco y negro). El disclaimer aclara que no diagnostica ni sustituye tratamiento.
 
 Botón en toda la página: Recibir la guía gratis.
 
@@ -145,7 +145,7 @@ Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Par
 - Formulario: email con etiqueta visible "Tu email"
 - CTA: Recibir la guía gratis
 - Microcopy: La guía te llega por correo desde Gonzalo Pedrosa. Después te escribo sobre este tema y puedes darte de baja con un clic. Privacidad.
-- Autoridad: foto 40 px + Gonzalo Pedrosa, psicólogo clínico
+- Autoridad: foto 40 px + Gonzalo Pedrosa, psicólogo
 - Ángulo por defecto del envío: B. El parámetro `a` sigue marcando de qué anuncio vino el lead.
 
 ## 2. Validación
@@ -181,7 +181,7 @@ Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Par
 
 - Foto: 160 px, `sizes="160px"`, `/yo.png`
 - Título: Quién escribe esta guía
-- Texto: Soy Gonzalo Pedrosa, psicólogo clínico. Escribí esta guía para parejas y familiares que quieren ayudar a alguien que apuesta y no saben por dónde empezar. Reúne principios psicológicos y herramientas prácticas para acompañar sin asumir la responsabilidad por la recuperación de otra persona.
+- Texto: Soy Gonzalo Pedrosa, psicólogo. Escribí esta guía para parejas y familiares que quieren ayudar a alguien que apuesta y no saben por dónde empezar. Reúne principios psicológicos y herramientas prácticas para acompañar sin asumir la responsabilidad por la recuperación de otra persona.
 - Segunda línea: Es un enfoque psicológico y profesional, sin contenido religioso. Puede complementar un grupo de apoyo, no lo reemplaza.
 
 ## 6. Para quién es
@@ -207,7 +207,7 @@ Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Par
 
 ## 9. Footer mínimo
 
-- © 2026 Gonzalo Pedrosa, psicólogo clínico · Privacidad · Términos
+- © 2026 Gonzalo Pedrosa, psicólogo · Privacidad · Términos
 - Si hay riesgo inmediato para alguien, contacta a los servicios de emergencia de tu país.
 - Privacidad: /privacidad
 - Términos: /terminos

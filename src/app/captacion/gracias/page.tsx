@@ -4,15 +4,14 @@ import Rastreo from "../Rastreo";
 
 export const metadata: Metadata = {
   title: "Listo. Tu guía va en camino.",
-  description: "La guía se envía por correo. Material psicoeducativo elaborado por un psicólogo clínico.",
+  description: "La guía se envía por correo. Material psicoeducativo elaborado por un psicólogo.",
   robots: { index: false, follow: false },
   twitter: {
     title: "Listo. Tu guía va en camino.",
   },
 };
 
-// TODO: URL del PDF
-const PDF_URL = "";
+const PDF_URL = "/captacion/guia";
 
 // TODO: link de pago del kit
 const KIT_PAGO_URL = "";
@@ -23,7 +22,7 @@ export default function GraciasPage() {
       <Rastreo evento="captacion_gracias" />
       <header className="border-b border-neutral-200">
         <div className="mx-auto flex h-12 w-full max-w-xl items-center px-5 sm:h-14">
-          <p className="text-sm font-medium">Gonzalo Pedrosa · Psicólogo clínico</p>
+          <p className="text-sm font-medium">Gonzalo Pedrosa · Psicólogo</p>
         </div>
       </header>
 
@@ -67,7 +66,7 @@ export default function GraciasPage() {
       <footer className="border-t border-neutral-200">
         <div className="mx-auto w-full max-w-xl px-5 py-8 text-sm leading-6 text-neutral-600">
           <p>
-            © 2026 Gonzalo Pedrosa, psicólogo clínico ·{" "}
+            © 2026 Gonzalo Pedrosa, psicólogo ·{" "}
             <Link href="/privacidad" prefetch={false} className="hover:text-neutral-900">
               Privacidad
             </Link>

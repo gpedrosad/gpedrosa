@@ -6,7 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 /**
  * Metadata consistente (sin cloaking) y neutral.
- * - Sin lenguaje clínico/diagnóstico ni promesas terapéuticas.
+ * - Sin lenguaje diagnóstico ni promesas terapéuticas.
  * - Mismo contenido para bots y humanos.
  */
 export const metadata: Metadata = {
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gonzalo Pedrosa | Agendamiento Online",
-    description: "Agendamiento Online",
+    title: "Gonzalo Pedrosa",
+    description: "Acompañamiento online",
     images: ["/yo.png"],
   },
   robots: { index: true, follow: true, "max-image-preview": "large" },
