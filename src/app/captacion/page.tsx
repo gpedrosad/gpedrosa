@@ -120,17 +120,6 @@ export default async function CaptacionPage({
       <Rastreo evento="captacion_landing" angulo={angulo} />
 
       <section className="capture-hero">
-        <header className="capture-header">
-          <Link href="/" className="capture-brand">
-            <span aria-hidden="true" />
-            Gonzalo Pedrosa
-          </Link>
-          <p>Psicólogo clínico</p>
-          <a href="#recibir" className="capture-pill capture-pill-small">
-            Recibir guía <span aria-hidden="true">↘</span>
-          </a>
-        </header>
-
         <div className="capture-hero-grid">
           <div className="capture-hero-copy">
             <p className="capture-eyebrow capture-eyebrow-mint">Guía gratuita · PDF</p>

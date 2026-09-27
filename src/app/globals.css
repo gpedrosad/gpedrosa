@@ -91,28 +91,6 @@ body {
   pointer-events: none;
 }
 
-.capture-header {
-  position: relative;
-  z-index: 20;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  width: min(1400px, calc(100% - 48px));
-  min-height: 66px;
-  margin: 18px auto 0;
-  padding: 8px 10px 8px 22px;
-  border: 1.5px solid rgba(220, 220, 220, 0.55);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.13);
-  backdrop-filter: blur(20px);
-}
-
-.capture-header > p {
-  color: rgba(247, 247, 242, 0.67);
-  font-size: 0.86rem;
-}
-
 .capture-brand {
   display: inline-flex;
   align-items: center;
@@ -144,11 +122,11 @@ body {
   color: var(--cap-ink);
   cursor: pointer;
   font: inherit;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.055em;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
   line-height: 1;
-  text-transform: uppercase;
+  text-transform: none;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
@@ -156,12 +134,6 @@ body {
 .capture-submit:hover:not(:disabled) {
   transform: translate(-4px, -4px);
   box-shadow: 4px 4px 0 var(--cap-ink);
-}
-
-.capture-pill-small {
-  min-height: 46px;
-  justify-self: end;
-  padding: 0 22px;
 }
 
 .capture-pill-dark {
@@ -200,10 +172,10 @@ body {
   border-radius: 2px;
   background: var(--cap-ink);
   color: var(--cap-paper);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 800;
-  letter-spacing: 0.11em;
-  line-height: 1;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
   text-transform: uppercase;
 }
 
@@ -266,9 +238,9 @@ body {
   justify-content: space-between;
   margin-bottom: 14px;
   color: rgba(247, 247, 242, 0.7);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 650;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
 }
 
 .capture-lead-form > label {
@@ -309,8 +281,8 @@ body {
 
 .capture-form-privacy {
   margin-top: 11px;
-  color: rgba(247, 247, 242, 0.58);
-  font-size: 0.68rem;
+  color: rgba(247, 247, 242, 0.78);
+  font-size: 0.75rem;
   line-height: 1.45;
 }
 
@@ -628,9 +600,9 @@ body {
 
 .capture-preview-meta p {
   color: var(--cap-mint);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   line-height: 1.35;
   text-transform: uppercase;
 }
@@ -916,7 +888,7 @@ body {
   max-width: 610px;
   justify-self: end;
   color: rgba(247, 247, 242, 0.5);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   line-height: 1.5;
   text-align: right;
 }
@@ -944,24 +916,6 @@ body {
 @media (max-width: 767px) {
   .capture-hero {
     border-radius: 0 0 30px 30px;
-  }
-
-  .capture-header {
-    grid-template-columns: 1fr auto;
-    width: calc(100% - 24px);
-    min-height: 60px;
-    margin-top: 12px;
-    padding-left: 16px;
-  }
-
-  .capture-header > p {
-    display: none;
-  }
-
-  .capture-pill-small {
-    min-height: 40px;
-    padding: 0 16px;
-    font-size: 0.67rem;
   }
 
   .capture-hero-grid {
@@ -1095,14 +1049,6 @@ body {
 @media (max-width: 410px) {
   .capture-brand {
     font-size: 0.86rem;
-  }
-
-  .capture-pill-small {
-    padding: 0 13px;
-  }
-
-  .capture-form-intro {
-    font-size: 0.68rem;
   }
 
   .capture-guide-art {
