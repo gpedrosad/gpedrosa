@@ -141,7 +141,7 @@ Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Par
 
 - Headline: Ayudar a quien apuesta sin hacerte cargo de todo
 - Subheadline: Guía gratuita en PDF para parejas y familiares de alguien que apuesta. Las 7 decisiones que más cuestan: qué responder cuando pide plata, si cubrir una deuda, qué hacer con las mentiras y cómo actuar si recae.
-- Miniatura: placeholder de portada (72 px) + PDF de 10 páginas · Descarga inmediata
+- Miniatura: placeholder de portada (72 px) + 7 decisiones · 15 minutos de lectura
 - Formulario: email con etiqueta visible "Tu email"
 - CTA: Recibir la guía gratis
 - Microcopy: La guía te llega por correo desde Gonzalo Pedrosa. Después te escribo sobre este tema y puedes darte de baja con un clic. Privacidad.
@@ -175,7 +175,7 @@ Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Par
 
 - Título: Así se ve por dentro
 - Dos placeholders A4 hasta tener capturas reales
-- Pie: PDF de 10 páginas.
+- Pie: 7 decisiones · 15 minutos de lectura.
 
 ## 5. Autoridad / confianza
 

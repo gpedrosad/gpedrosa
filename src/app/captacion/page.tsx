@@ -122,7 +122,7 @@ export default async function CaptacionPage({
       <section className="capture-hero">
         <div className="capture-hero-grid">
           <div className="capture-hero-copy">
-            <p className="capture-eyebrow capture-eyebrow-mint">Guía gratuita · PDF</p>
+            <p className="capture-eyebrow capture-eyebrow-mint">Guía gratuita</p>
             <h1>
               Ayudar a quien apuesta{" "}
               <em>sin hacerte cargo</em> de{" "}
@@ -138,8 +138,8 @@ export default async function CaptacionPage({
 
             <div className="capture-form-card">
               <div className="capture-form-intro">
-                <span>PDF · 10 páginas</span>
-                <span>Descarga inmediata</span>
+                <span>7 decisiones</span>
+                <span>15 minutos de lectura</span>
               </div>
               <LeadForm id="hero" angulo={angulo} />
             </div>
@@ -235,12 +235,12 @@ export default async function CaptacionPage({
               Así se ve <strong>por dentro.</strong>
             </h2>
             <p>
-              Diez páginas breves para ayudarte a ordenar decisiones difíciles,
-              sin fórmulas mágicas ni respuestas impuestas.
+              Siete decisiones para leer en unos 15 minutos, sin fórmulas
+              mágicas ni respuestas impuestas.
             </p>
             <div className="capture-preview-meta">
-              <span>10</span>
-              <p>páginas<br />en PDF</p>
+              <span>7</span>
+              <p>decisiones<br />15 minutos</p>
             </div>
           </div>
           <div className="capture-pages">
