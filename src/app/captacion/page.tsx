@@ -18,10 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://gpedrosa.cl/captacion",
   },
-  twitter: {
-    title: TITULO,
-    description: DESCRIPCION,
-  },
+  twitter: { title: TITULO, description: DESCRIPCION },
 };
 
 const situacion = [
@@ -94,18 +91,19 @@ function anguloDe(valor: string | string[] | undefined) {
   return marca === "A" || marca === "C" ? marca : "B";
 }
 
-function MiniaturaPdf() {
+function HandUnderline() {
   return (
-    <div className="flex items-center gap-3">
-      <img
-        src="/captacion/guia-portada.svg"
-        alt=""
-        width={51}
-        height={72}
-        className="h-[72px] w-[51px] border border-neutral-300 bg-[#f4f1ea] object-cover"
-      />
-      <p className="text-sm leading-5 text-neutral-700">PDF de 10 páginas · Descarga inmediata</p>
-    </div>
+    <svg className="capture-hand-underline" viewBox="0 0 320 28" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M5 20C86 8 191 10 315 17C267 15 226 18 181 22" />
+    </svg>
+  );
+}
+
+function Star() {
+  return (
+    <svg viewBox="0 0 80 80" aria-hidden="true">
+      <path d="M40 4c2 22 13 34 36 36-23 2-34 14-36 36-2-22-13-34-36-36 23-2 34-14 36-36Z" />
+    </svg>
   );
 }
 
@@ -118,195 +116,249 @@ export default async function CaptacionPage({
   const angulo = anguloDe(a);
 
   return (
-    <div className="min-h-screen bg-[#faf9f6] text-neutral-900">
+    <div className="capture-shell">
       <Rastreo evento="captacion_landing" angulo={angulo} />
-      <header className="border-b border-neutral-200">
-        <div className="mx-auto flex h-12 w-full max-w-xl items-center px-5 sm:h-14">
-          <p className="text-sm font-medium">Gonzalo Pedrosa · Psicólogo clínico</p>
+
+      <section className="capture-hero">
+        <header className="capture-header">
+          <Link href="/" className="capture-brand">
+            <span aria-hidden="true" />
+            Gonzalo Pedrosa
+          </Link>
+          <p>Psicólogo clínico</p>
+          <a href="#recibir" className="capture-pill capture-pill-small">
+            Recibir guía <span aria-hidden="true">↘</span>
+          </a>
+        </header>
+
+        <div className="capture-hero-grid">
+          <div className="capture-hero-copy">
+            <p className="capture-eyebrow capture-eyebrow-mint">Guía gratuita · PDF</p>
+            <h1>
+              Ayudar a quien apuesta{" "}
+              <em>sin hacerte cargo</em> de{" "}
+              <span className="capture-marked">
+                <strong>todo.</strong>
+                <HandUnderline />
+              </span>
+            </h1>
+            <p className="capture-lead">
+              Las 7 decisiones que más cuestan: qué responder cuando pide plata,
+              si cubrir una deuda, qué hacer con las mentiras y cómo actuar si recae.
+            </p>
+
+            <div className="capture-form-card">
+              <div className="capture-form-intro">
+                <span>PDF · 10 páginas</span>
+                <span>Descarga inmediata</span>
+              </div>
+              <LeadForm id="hero" angulo={angulo} />
+            </div>
+
+            <div className="capture-byline">
+              <Image src="/yo.png" alt="" width={46} height={46} className="capture-avatar" />
+              <p>
+                Elaborada por <strong>Gonzalo Pedrosa</strong>
+                <span>Psicólogo clínico</span>
+              </p>
+            </div>
+          </div>
+
+          <div className="capture-guide-art" aria-label="Vista previa de la guía">
+            <div className="capture-note">para leer con calma</div>
+            <div className="capture-cover capture-cover-back">
+              <Image
+                src="/captacion/guia-interior.svg"
+                alt="Página interior de la guía: las 7 decisiones"
+                fill
+                sizes="(max-width: 767px) 70vw, 360px"
+              />
+            </div>
+            <div className="capture-cover capture-cover-front">
+              <Image
+                src="/captacion/guia-portada.svg"
+                alt="Portada de la guía gratuita"
+                fill
+                priority
+                sizes="(max-width: 767px) 70vw, 360px"
+              />
+            </div>
+            <div className="capture-star"><Star /></div>
+            <svg className="capture-loop" viewBox="0 0 190 100" aria-hidden="true">
+              <path d="M8 78c34 15 82 5 99-16 14-18 0-33-20-27-23 7-23 31 1 39 26 8 68-10 94-48" />
+            </svg>
+          </div>
         </div>
-      </header>
+      </section>
 
       <main>
-        <section className="mx-auto w-full max-w-xl px-5 pt-4 pb-5 sm:pt-10 sm:pb-12">
-          <h1 className="text-[1.5rem] font-semibold leading-[1.2] tracking-[-0.03em] sm:text-4xl sm:leading-tight">
-            Ayudar a quien apuesta sin hacerte cargo de todo
-          </h1>
-          <p className="mt-2.5 text-sm leading-5 text-neutral-700 sm:mt-5 sm:text-base sm:leading-7">
-            Guía gratuita en PDF para parejas y familiares de alguien que apuesta. Las 7 decisiones que
-            más cuestan: qué responder cuando pide plata, si cubrir una deuda, qué hacer con las
-            mentiras y cómo actuar si recae.
-          </p>
-          <div className="mt-3 sm:mt-6">
-            <MiniaturaPdf />
-          </div>
-          <div className="mt-3 sm:mt-6">
-            <LeadForm id="hero" angulo={angulo} />
-          </div>
-          <div className="mt-3 flex items-center gap-2.5">
-            <Image
-              src="/yo.png"
-              alt=""
-              width={40}
-              height={40}
-              sizes="40px"
-              className="h-10 w-10 rounded-full object-cover"
-            />
-            <p className="text-sm text-neutral-700">Gonzalo Pedrosa, psicólogo clínico</p>
-          </div>
-        </section>
-
-        <section className="border-t border-neutral-200 bg-white">
-          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
-            <h2 className="text-2xl font-semibold leading-snug tracking-[-0.02em] sm:text-3xl">
-              Querer ayudar y no saber por dónde empezar
+        <section className="capture-problem">
+          <div className="capture-section-heading">
+            <p className="capture-eyebrow">Quizás te suene familiar</p>
+            <h2>
+              Querer ayudar y no saber <strong>por dónde empezar.</strong>
             </h2>
-            <ul className="mt-6 space-y-2 text-base leading-7 text-neutral-700">
-              {situacion.map((linea) => (
-                <li key={linea} className="flex gap-2">
-                  <span className="text-neutral-400" aria-hidden="true">
-                    -
-                  </span>
-                  <span>{linea}</span>
+          </div>
+          <div className="capture-problem-grid">
+            <ul>
+              {situacion.map((linea, index) => (
+                <li key={linea}>
+                  <span>0{index + 1}</span>
+                  {linea}
                 </li>
               ))}
             </ul>
-            <p className="mt-8 text-lg font-semibold leading-7 text-neutral-900">
-              Esta guía no va a hacer que deje de apostar. Eso no depende de ti. Lo que sí depende de
-              ti es cómo ayudas, qué límites pones y qué dejas de cubrir.
-            </p>
+            <blockquote>
+              <span aria-hidden="true">“</span>
+              <p>
+                Esta guía no va a hacer que deje de apostar. Eso no depende de ti.
+                Lo que sí depende de ti es cómo ayudas, qué límites pones y qué dejas de cubrir.
+              </p>
+            </blockquote>
           </div>
         </section>
 
-        <section className="border-t border-neutral-200">
-          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
-            <h2 className="text-2xl font-semibold leading-snug tracking-[-0.02em] sm:text-3xl">
-              Las 7 decisiones que vas a poder tomar con más claridad
+        <section className="capture-decisions">
+          <div className="capture-section-heading capture-section-heading-left">
+            <p className="capture-eyebrow">Dentro de la guía</p>
+            <h2>
+              Siete decisiones para mirar con más <strong>claridad.</strong>
             </h2>
-            <ol className="mt-6 list-decimal space-y-4 pl-5 text-base leading-7 text-neutral-700">
-              {decisiones.map((item) => (
-                <li key={item.titulo}>
-                  <span className="font-semibold text-neutral-900">{item.titulo}</span> {item.texto}
-                </li>
-              ))}
-            </ol>
-            <a
-              href="#recibir"
-              className="mt-8 inline-flex h-11 items-center justify-center bg-neutral-900 px-5 text-sm font-semibold text-white"
-            >
-              Recibir la guía gratis
-            </a>
           </div>
+          <ol className="capture-decision-grid">
+            {decisiones.map((item, index) => (
+              <li key={item.titulo} className={index === 0 ? "capture-decision-featured" : ""}>
+                <span className="capture-decision-number">{String(index + 1).padStart(2, "0")}</span>
+                <h3>{item.titulo}</h3>
+                <p>{item.texto}</p>
+              </li>
+            ))}
+          </ol>
+          <a href="#recibir" className="capture-pill capture-pill-dark">
+            Recibir la guía gratis <span aria-hidden="true">↓</span>
+          </a>
         </section>
 
-        <section className="border-t border-neutral-200 bg-white">
-          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
-            <h2 className="text-2xl font-semibold tracking-[-0.02em]">Así se ve por dentro</h2>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5">
-              <img
-                src="/captacion/guia-portada.svg"
-                alt="Portada de la guía gratuita"
-                width={420}
-                height={594}
-                className="aspect-[210/297] w-full border border-neutral-300 bg-[#f4f1ea] object-cover"
-              />
-              <img
-                src="/captacion/guia-interior.svg"
-                alt="Página interior de la guía: las 7 decisiones"
-                width={420}
-                height={594}
-                className="aspect-[210/297] w-full border border-neutral-300 bg-[#faf9f6] object-cover"
-              />
+        <section className="capture-preview">
+          <div className="capture-preview-copy">
+            <p className="capture-eyebrow capture-eyebrow-mint">Un vistazo</p>
+            <h2>
+              Así se ve <strong>por dentro.</strong>
+            </h2>
+            <p>
+              Diez páginas breves para ayudarte a ordenar decisiones difíciles,
+              sin fórmulas mágicas ni respuestas impuestas.
+            </p>
+            <div className="capture-preview-meta">
+              <span>10</span>
+              <p>páginas<br />en PDF</p>
             </div>
-            <p className="mt-3 text-sm text-neutral-600">PDF de 10 páginas.</p>
           </div>
-        </section>
-
-        <section className="border-t border-neutral-200">
-          <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-5 py-12 sm:flex-row sm:items-start sm:gap-8 sm:py-16">
-            <Image
-              src="/yo.png"
-              alt="Gonzalo Pedrosa"
-              width={160}
-              height={160}
-              sizes="160px"
-              className="h-40 w-40 shrink-0 object-cover"
-            />
+          <div className="capture-pages">
             <div>
-              <h2 className="text-2xl font-semibold tracking-[-0.02em]">Quién escribe esta guía</h2>
-              <p className="mt-4 text-base leading-7 text-neutral-700">
-                Soy Gonzalo Pedrosa, psicólogo clínico. Escribí esta guía para parejas y familiares que
-                quieren ayudar a alguien que apuesta y no saben por dónde empezar. Reúne principios
-                psicológicos y herramientas prácticas para acompañar sin asumir la responsabilidad por
-                la recuperación de otra persona.
-              </p>
-              <p className="mt-4 text-base leading-7 text-neutral-700">
-                Es un enfoque psicológico y profesional, sin contenido religioso. Puede complementar un
-                grupo de apoyo, no lo reemplaza.
-              </p>
+              <Image src="/captacion/guia-portada.svg" alt="Portada de la guía gratuita" fill sizes="350px" />
+            </div>
+            <div>
+              <Image
+                src="/captacion/guia-interior.svg"
+                alt="Página interior de la guía"
+                fill
+                sizes="350px"
+              />
             </div>
           </div>
         </section>
 
-        <section className="border-t border-neutral-200 bg-white">
-          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
-            <p className="text-base leading-7 text-neutral-700">
-              Para ti si eres pareja, hija o hijo, madre, padre o alguien cercano a una persona que
-              apuesta. No necesitas que la otra persona admita el problema.
-            </p>
-            <p className="mt-4 text-base leading-7 text-neutral-700">
-              No es para diagnosticar a nadie ni reemplaza un tratamiento psicológico. Es material
-              psicoeducativo.
-            </p>
+        <section className="capture-author">
+          <div className="capture-author-photo">
+            <Image src="/yo.png" alt="Gonzalo Pedrosa" fill sizes="(max-width: 767px) 100vw, 45vw" />
           </div>
-        </section>
-
-        <section className="border-t border-neutral-200">
-          <div className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
-            <h2 className="text-2xl font-semibold tracking-[-0.02em]">Preguntas frecuentes</h2>
-            <div className="mt-6">
-              {preguntas.map((item) => (
-                <details key={item.q} className="border-b border-neutral-200">
-                  <summary className="flex min-h-11 cursor-pointer items-center py-3 text-base font-semibold leading-6">
-                    {item.q}
-                  </summary>
-                  <p className="pb-4 text-base leading-7 text-neutral-700">{item.a}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="recibir" className="scroll-mt-4 border-t border-neutral-200 bg-white">
-          <div className="mx-auto w-full max-w-md px-5 py-12 sm:py-16">
-            <h2 className="text-2xl font-semibold leading-snug tracking-[-0.02em] sm:text-3xl">
-              No necesitas tener todas las respuestas hoy.
+          <div className="capture-author-copy">
+            <p className="capture-eyebrow">Quién escribe esta guía</p>
+            <h2>
+              Hola, soy <strong>Gonzalo.</strong>
             </h2>
-            <p className="mt-4 text-base leading-7 text-neutral-700">
-              Empieza por las decisiones que sí dependen de ti.
+            <p>
+              Soy psicólogo clínico. Escribí esta guía para parejas y familiares
+              que quieren ayudar a alguien que apuesta y no saben por dónde empezar.
             </p>
-            <div className="mt-8">
-              <LeadForm id="final" angulo={angulo} />
-            </div>
+            <p>
+              Reúne principios psicológicos y herramientas prácticas para acompañar
+              sin asumir la responsabilidad por la recuperación de otra persona.
+            </p>
+            <p className="capture-author-note">
+              Enfoque psicológico, profesional y laico. Puede complementar un grupo
+              de apoyo, no lo reemplaza.
+            </p>
+          </div>
+        </section>
+
+        <section className="capture-fit">
+          <div>
+            <span aria-hidden="true">✓</span>
+            <p>
+              <strong>Es para ti</strong> si eres pareja, hija o hijo, madre, padre
+              o alguien cercano a una persona que apuesta. No necesitas que la otra
+              persona admita el problema.
+            </p>
+          </div>
+          <div>
+            <span aria-hidden="true">×</span>
+            <p>
+              <strong>No es para diagnosticar</strong> a nadie ni reemplaza un
+              tratamiento psicológico. Es material psicoeducativo.
+            </p>
+          </div>
+        </section>
+
+        <section className="capture-faq">
+          <div className="capture-section-heading">
+            <p className="capture-eyebrow">Antes de descargar</p>
+            <h2>
+              Preguntas <strong>frecuentes.</strong>
+            </h2>
+          </div>
+          <div className="capture-faq-list">
+            {preguntas.map((item) => (
+              <details key={item.q}>
+                <summary>
+                  <span>{item.q}</span>
+                  <i aria-hidden="true" />
+                </summary>
+                <p>{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section id="recibir" className="capture-final">
+          <div className="capture-final-star" aria-hidden="true"><Star /></div>
+          <div className="capture-final-copy">
+            <p className="capture-eyebrow">Descarga gratuita</p>
+            <h2>
+              No necesitas tener todas las respuestas <strong>hoy.</strong>
+            </h2>
+            <p>Empieza por las decisiones que sí dependen de ti.</p>
+          </div>
+          <div className="capture-final-form">
+            <LeadForm id="final" angulo={angulo} />
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-neutral-200">
-        <div className="mx-auto w-full max-w-xl px-5 py-8 text-sm leading-6 text-neutral-600">
-          <p>
-            © 2026 Gonzalo Pedrosa, psicólogo clínico ·{" "}
-            <Link href="/privacidad" prefetch={false} className="hover:text-neutral-900">
-              Privacidad
-            </Link>
-            {" · "}
-            <Link href="/terminos" prefetch={false} className="hover:text-neutral-900">
-              Términos
-            </Link>
-          </p>
-          <p className="mt-3">
-            Si hay riesgo inmediato para alguien, contacta a los servicios de emergencia de tu país.
-          </p>
+      <footer className="capture-footer">
+        <div className="capture-brand">
+          <span aria-hidden="true" />
+          Gonzalo Pedrosa
         </div>
+        <div>
+          <Link href="/privacidad" prefetch={false}>Privacidad</Link>
+          <Link href="/terminos" prefetch={false}>Términos</Link>
+        </div>
+        <p>
+          © 2026 · Si hay riesgo inmediato para alguien, contacta a los servicios
+          de emergencia de tu país.
+        </p>
       </footer>
     </div>
   );

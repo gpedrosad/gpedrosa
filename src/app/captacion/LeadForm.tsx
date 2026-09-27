@@ -69,8 +69,8 @@ export default function LeadForm({
   }
 
   return (
-    <form method="post" action="/api/captacion" onSubmit={submit} className="space-y-2.5">
-      <label htmlFor={`${id}-email`} className="block text-sm font-medium text-neutral-800">
+    <form method="post" action="/api/captacion" onSubmit={submit} className="capture-lead-form">
+      <label htmlFor={`${id}-email`}>
         Tu email
       </label>
       <input
@@ -79,7 +79,8 @@ export default function LeadForm({
         type="email"
         required
         autoComplete="email"
-        className="h-11 w-full border border-neutral-500 bg-white px-3 text-base outline-none focus:border-neutral-900"
+        placeholder="nombre@correo.com"
+        className="capture-email-input"
       />
       <input type="hidden" name="resource" value={resource} />
       <input type="hidden" name="angulo" value={angulo} />
@@ -90,11 +91,11 @@ export default function LeadForm({
       <button
         type="submit"
         disabled={state === "sending" || state === "sent"}
-        className="flex h-11 w-full items-center justify-center bg-neutral-900 px-4 text-sm font-semibold text-white disabled:opacity-60"
+        className="capture-submit"
       >
         {state === "sending" ? "Enviando…" : state === "sent" ? "Guía enviada" : button}
       </button>
-      <p className="text-xs leading-4 text-neutral-600">
+      <p className="capture-form-privacy">
         La guía te llega por correo desde Gonzalo Pedrosa. Después te escribo sobre este tema y puedes
         darte de baja con un clic.{" "}
         <Link href="/privacidad" prefetch={false} className="underline underline-offset-2">
@@ -102,7 +103,7 @@ export default function LeadForm({
       </p>
       <div
         aria-live="polite"
-        className={`text-sm ${state === "error" ? "text-red-700" : "text-neutral-700"}`}
+        className={`capture-form-message ${state === "error" ? "capture-form-error" : ""}`}
       >
         {message}
       </div>
