@@ -73,10 +73,6 @@ const preguntas = [
     a: "Sí. La guía se centra en cómo puedes ayudar tú, no en convencer a la otra persona.",
   },
   {
-    q: "¿Tiene un enfoque religioso o de 12 pasos?",
-    a: "No. Es material psicológico y laico. Si un grupo de apoyo te sirve, esta guía lo puede complementar.",
-  },
-  {
     q: "¿Me va a decir si lo dejo o me quedo?",
     a: "No. La guía no decide por ti. Te ayuda a ordenar cómo ayudar y qué límites poner.",
   },
@@ -276,7 +272,7 @@ export default async function CaptacionPage({
               sin asumir la responsabilidad por la recuperación de otra persona.
             </p>
             <p className="capture-author-note">
-              Enfoque psicológico, profesional y laico. Puede complementar un grupo
+              Enfoque psicológico y profesional. Puede complementar un grupo
               de apoyo, no lo reemplaza.
             </p>
           </div>

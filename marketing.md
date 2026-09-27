@@ -182,7 +182,7 @@ Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Par
 - Foto: 160 px, `sizes="160px"`, `/yo.png`
 - Título: Quién escribe esta guía
 - Texto: Soy Gonzalo Pedrosa, psicólogo. Escribí esta guía para parejas y familiares que quieren ayudar a alguien que apuesta y no saben por dónde empezar. Reúne principios psicológicos y herramientas prácticas para acompañar sin asumir la responsabilidad por la recuperación de otra persona.
-- Segunda línea: Es un enfoque psicológico y profesional, sin contenido religioso. Puede complementar un grupo de apoyo, no lo reemplaza.
+- Segunda línea: Es un enfoque psicológico y profesional. Puede complementar un grupo de apoyo, no lo reemplaza.
 
 ## 6. Para quién es
 
@@ -194,7 +194,6 @@ Hero → Validación → 7 decisiones → Vista previa PDF → Autoridad → Par
 - ¿Alguien más se va a enterar? No. La guía llega solo a tu correo, desde Gonzalo Pedrosa, y tu email no queda guardado en este dispositivo.
 - ¿Me van a llenar de correos? No. Después de la guía te escribo sobre este tema, y puedes darte de baja con un clic en cualquier correo.
 - ¿Sirve si no admite que tiene un problema? Sí. La guía se centra en cómo puedes ayudar tú, no en convencer a la otra persona.
-- ¿Tiene un enfoque religioso o de 12 pasos? No. Es material psicológico y laico. Si un grupo de apoyo te sirve, esta guía lo puede complementar.
 - ¿Me va a decir si lo dejo o me quedo? No. La guía no decide por ti. Te ayuda a ordenar cómo ayudar y qué límites poner.
 - ¿Reemplaza una terapia? No. Es un primer paso para ordenar decisiones. Si necesitas acompañamiento, puedes consultar con un profesional.
 
