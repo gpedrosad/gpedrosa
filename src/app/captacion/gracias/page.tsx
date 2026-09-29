@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Rastreo from "../Rastreo";
 
@@ -16,69 +17,118 @@ const PDF_URL = "/captacion/guia";
 // TODO: link de pago del kit
 const KIT_PAGO_URL = "";
 
+function Check() {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path d="m7 16.5 5.4 5.3L25 9.4" />
+    </svg>
+  );
+}
+
+function Star() {
+  return (
+    <svg viewBox="0 0 80 80" aria-hidden="true">
+      <path d="M40 4c2 22 13 34 36 36-23 2-34 14-36 36-2-22-13-34-36-36 23-2 34-14 36-36Z" />
+    </svg>
+  );
+}
+
 export default function GraciasPage() {
   return (
-    <div className="min-h-screen bg-[#faf9f6] text-neutral-900">
+    <div className="capture-shell capture-thanks-shell">
       <Rastreo evento="captacion_gracias" />
-      <header className="border-b border-neutral-200">
-        <div className="mx-auto flex h-12 w-full max-w-xl items-center px-5 sm:h-14">
-          <p className="text-sm font-medium">Gonzalo Pedrosa · Psicólogo</p>
-        </div>
+
+      <header className="capture-thanks-header">
+        <Link href="/captacion" className="capture-brand">
+          <span aria-hidden="true" />
+          Gonzalo Pedrosa
+        </Link>
+        <p>Psicólogo · Guía para familiares</p>
       </header>
 
-      <main className="mx-auto w-full max-w-xl px-5 py-12 sm:py-16">
-        <h1 className="text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-4xl">
-          Listo. Tu guía va en camino.
-        </h1>
-        <p className="mt-4 text-base leading-7 text-neutral-700">
-          Te la enviamos por correo desde Gonzalo Pedrosa. Si no la ves en 5 minutos, revisa
-          Promociones o Spam.
-        </p>
-        <a
-          href={PDF_URL || "#pdf"}
-          className="mt-8 inline-flex h-11 w-full items-center justify-center bg-neutral-900 px-5 text-sm font-semibold text-white sm:w-auto"
-        >
-          Descargar ahora
-        </a>
+      <main>
+        <section className="capture-thanks-hero">
+          <div className="capture-thanks-copy">
+            <div className="capture-confirmation" aria-hidden="true">
+              <Check />
+            </div>
+            <p className="capture-eyebrow capture-eyebrow-mint">Guía enviada</p>
+            <h1>
+              Listo. Tu guía va <strong>en camino.</strong>
+            </h1>
+            <p className="capture-thanks-lead">
+              Te la enviamos por correo desde Gonzalo Pedrosa. Si no la ves en 5 minutos,
+              revisa Promociones o Spam.
+            </p>
+            <a href={PDF_URL} className="capture-pill capture-thanks-primary">
+              Descargar ahora <span aria-hidden="true">↗</span>
+            </a>
+          </div>
 
-        <section className="mt-14 border-t border-neutral-200 pt-12">
-          <p className="text-base leading-7 text-neutral-700">
-            Entender qué hacer es el primer paso. Aplicarlo cuando vuelve a pedir plata, aparece otra
-            mentira o se incumple un límite suele ser más difícil.
-          </p>
-          <h2 className="mt-8 text-2xl font-semibold tracking-[-0.02em]">
-            Kit práctico para familiares
-          </h2>
-          <p className="mt-4 text-base leading-7 text-neutral-700">
-            La guía gratis te ayuda a ver qué decisiones tomar. El kit te enseña cómo llevarlas a la
-            práctica.
-          </p>
-          <p className="mt-4 text-lg font-semibold">$27.990 CLP</p>
-          <a
-            href={KIT_PAGO_URL || "#kit"}
-            className="mt-6 inline-flex h-11 w-full items-center justify-center bg-neutral-900 px-5 text-sm font-semibold text-white sm:w-auto"
-          >
-            Comprar el kit
-          </a>
+          <div className="capture-thanks-guide" aria-label="Vista previa de la guía">
+            <div className="capture-thanks-note">7 decisiones · 15 minutos</div>
+            <div className="capture-thanks-cover">
+              <Image
+                src="/captacion/guia-portada.svg"
+                alt="Portada de la guía Ayudar a quien apuesta sin hacerte cargo de todo"
+                fill
+                priority
+                sizes="(max-width: 767px) 72vw, 360px"
+              />
+            </div>
+            <div className="capture-thanks-star"><Star /></div>
+          </div>
+        </section>
+
+        <section id="kit" className="capture-kit">
+          <div className="capture-kit-intro">
+            <p className="capture-eyebrow">El siguiente paso</p>
+            <h2>
+              Kit práctico <strong>para familiares.</strong>
+            </h2>
+            <p>
+              Entender qué hacer es el primer paso. Aplicarlo cuando vuelve a pedir plata,
+              aparece otra mentira o se incumple un límite suele ser más difícil.
+            </p>
+          </div>
+
+          <div className="capture-kit-card">
+            <div className="capture-kit-comparison">
+              <div>
+                <span>01</span>
+                <p>La guía gratis te ayuda a ver <strong>qué decisiones tomar.</strong></p>
+              </div>
+              <div>
+                <span>02</span>
+                <p>El kit te enseña <strong>cómo llevarlas a la práctica.</strong></p>
+              </div>
+            </div>
+            <div className="capture-kit-buy">
+              <div>
+                <p>Kit práctico para familiares</p>
+                <strong>$27.990 <small>CLP</small></strong>
+              </div>
+              <a href={KIT_PAGO_URL || "#kit"} className="capture-pill capture-kit-button">
+                Comprar el kit <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
         </section>
       </main>
 
-      <footer className="border-t border-neutral-200">
-        <div className="mx-auto w-full max-w-xl px-5 py-8 text-sm leading-6 text-neutral-600">
-          <p>
-            © 2026 Gonzalo Pedrosa, psicólogo ·{" "}
-            <Link href="/privacidad" prefetch={false} className="hover:text-neutral-900">
-              Privacidad
-            </Link>
-            {" · "}
-            <Link href="/terminos" prefetch={false} className="hover:text-neutral-900">
-              Términos
-            </Link>
-          </p>
-          <p className="mt-3">
-            Si hay riesgo inmediato para alguien, contacta a los servicios de emergencia de tu país.
-          </p>
+      <footer className="capture-footer capture-thanks-footer">
+        <div className="capture-brand">
+          <span aria-hidden="true" />
+          Gonzalo Pedrosa
         </div>
+        <div>
+          <Link href="/privacidad" prefetch={false}>Privacidad</Link>
+          <Link href="/terminos" prefetch={false}>Términos</Link>
+        </div>
+        <p>
+          © 2026 · Si hay riesgo inmediato para alguien, contacta a los servicios
+          de emergencia de tu país.
+        </p>
       </footer>
     </div>
   );
