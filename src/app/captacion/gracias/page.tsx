@@ -38,14 +38,6 @@ export default function GraciasPage() {
     <div className="capture-shell capture-thanks-shell">
       <Rastreo evento="captacion_gracias" />
 
-      <header className="capture-thanks-header">
-        <Link href="/captacion" className="capture-brand">
-          <span aria-hidden="true" />
-          Gonzalo Pedrosa
-        </Link>
-        <p>Psicólogo · Guía para familiares</p>
-      </header>
-
       <main>
         <section className="capture-thanks-hero">
           <div className="capture-thanks-copy">
@@ -61,12 +53,16 @@ export default function GraciasPage() {
               revisa Promociones o Spam.
             </p>
             <a href={PDF_URL} className="capture-pill capture-thanks-primary">
-              Descargar ahora <span aria-hidden="true">↗</span>
+              Ver la guía ahora <span aria-hidden="true">↗</span>
             </a>
           </div>
 
-          <div className="capture-thanks-guide" aria-label="Vista previa de la guía">
-            <div className="capture-thanks-note">7 decisiones · 15 minutos</div>
+          <a
+            href={PDF_URL}
+            className="capture-thanks-guide"
+            aria-label="Ver la guía Ayudar a quien apuesta sin hacerte cargo de todo"
+          >
+            <div className="capture-thanks-note">Ver la guía ↗</div>
             <div className="capture-thanks-cover">
               <Image
                 src="/captacion/guia-portada.svg"
@@ -77,7 +73,7 @@ export default function GraciasPage() {
               />
             </div>
             <div className="capture-thanks-star"><Star /></div>
-          </div>
+          </a>
         </section>
 
         <section id="kit" className="capture-kit">

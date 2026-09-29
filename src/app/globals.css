@@ -898,22 +898,6 @@ body {
   overflow: clip;
 }
 
-.capture-thanks-header {
-  display: flex;
-  width: min(1240px, calc(100% - 96px));
-  min-height: 78px;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 auto;
-}
-
-.capture-thanks-header > p {
-  color: #6b6b67;
-  font-size: 0.78rem;
-  font-weight: 650;
-  letter-spacing: 0.03em;
-}
-
 .capture-thanks-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.7fr);
@@ -972,9 +956,10 @@ body {
 }
 
 .capture-thanks-primary {
-  min-width: 218px;
+  min-width: 228px;
   margin-top: 34px;
   padding: 0 26px;
+  box-shadow: 0 0 0 7px rgba(145, 227, 177, 0.1);
 }
 
 .capture-thanks-primary:hover {
@@ -983,9 +968,15 @@ body {
 
 .capture-thanks-guide {
   position: relative;
+  display: block;
   width: min(370px, 100%);
   height: 500px;
   justify-self: center;
+  transition: transform 200ms ease;
+}
+
+.capture-thanks-guide:hover {
+  transform: translateY(-5px);
 }
 
 .capture-thanks-guide::before {
@@ -1320,38 +1311,66 @@ body {
     text-align: left;
   }
 
-  .capture-thanks-header {
-    width: calc(100% - 40px);
-    min-height: 68px;
-  }
-
-  .capture-thanks-header > p {
-    display: none;
-  }
-
   .capture-thanks-hero {
     grid-template-columns: 1fr;
-    gap: 62px;
+    gap: 34px;
     min-height: 0;
-    padding: 60px 20px 86px;
+    padding: 44px 20px 64px;
     border-radius: 0 0 30px 30px;
   }
 
+  .capture-confirmation {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 22px;
+  }
+
+  .capture-confirmation svg {
+    width: 28px;
+  }
+
   .capture-thanks-copy h1 {
-    font-size: clamp(3rem, 13vw, 4.25rem);
+    font-size: clamp(2.7rem, 12vw, 3.7rem);
+  }
+
+  .capture-thanks-lead {
+    margin-top: 20px;
   }
 
   .capture-thanks-primary {
     width: 100%;
+    min-height: 58px;
+    margin-top: 26px;
+    font-size: 1rem;
+    box-shadow: 0 0 0 7px rgba(145, 227, 177, 0.13);
   }
 
   .capture-thanks-guide {
-    width: min(330px, calc(100% - 20px));
-    height: 455px;
+    width: min(250px, calc(100% - 74px));
+    height: 338px;
+  }
+
+  .capture-thanks-guide::before {
+    right: -52px;
+    bottom: 10px;
+    width: 270px;
+    height: 270px;
+  }
+
+  .capture-thanks-cover {
+    inset: 12px 8px 0;
+  }
+
+  .capture-thanks-note {
+    right: -34px;
+    top: 4px;
+    padding: 9px 13px;
   }
 
   .capture-thanks-star {
-    left: -24px;
+    left: -30px;
+    bottom: 18px;
+    width: 64px;
   }
 
   .capture-kit {
