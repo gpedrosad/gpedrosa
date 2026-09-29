@@ -153,7 +153,8 @@ export default async function CaptacionPage({
             <div className="capture-note">para leer con calma</div>
             <div className="capture-cover capture-cover-back">
               <Image
-                src="/captacion/guia-interior.svg"
+                src="/captacion/guia-interior.png"
+                quality={90}
                 alt="Página interior de la guía: las 7 decisiones"
                 fill
                 sizes="(max-width: 767px) 70vw, 360px"
@@ -161,7 +162,8 @@ export default async function CaptacionPage({
             </div>
             <div className="capture-cover capture-cover-front">
               <Image
-                src="/captacion/guia-portada.svg"
+                src="/captacion/guia-portada.png"
+                quality={90}
                 alt="Portada de la guía gratuita"
                 fill
                 priority
@@ -241,11 +243,18 @@ export default async function CaptacionPage({
           </div>
           <div className="capture-pages">
             <div>
-              <Image src="/captacion/guia-portada.svg" alt="Portada de la guía gratuita" fill sizes="350px" />
+              <Image
+                src="/captacion/guia-portada.png"
+                quality={90}
+                alt="Portada de la guía gratuita"
+                fill
+                sizes="350px"
+              />
             </div>
             <div>
               <Image
-                src="/captacion/guia-interior.svg"
+                src="/captacion/guia-interior.png"
+                quality={90}
                 alt="Página interior de la guía"
                 fill
                 sizes="350px"

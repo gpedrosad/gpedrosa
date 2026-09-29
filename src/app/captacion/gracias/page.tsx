@@ -65,7 +65,8 @@ export default function GraciasPage() {
             <div className="capture-thanks-note">Ver la guía ↗</div>
             <div className="capture-thanks-cover">
               <Image
-                src="/captacion/guia-portada.svg"
+                src="/captacion/guia-portada.png"
+                quality={90}
                 alt="Portada de la guía Ayudar a quien apuesta sin hacerte cargo de todo"
                 fill
                 priority
