@@ -3,6 +3,7 @@
 Estado: Experimento 1 (control). Una landing, un lead magnet, tres anuncios que solo cambian el ángulo. El anuncio, la landing y el PDF prometen lo mismo: **7 decisiones importantes**. El Kit de $27 aparece en la thank-you, no en el anuncio ni en la landing. El programa de $250 no se menciona en este test.
 
 Canal: Meta Ads → `/captacion` → email → `/captacion/gracias`.
+Los emails se guardan en Supabase KaWa (`dkpihigjlifjvxiszkew`), tabla `gpedrosa_leads`. No se usa el proyecto de AgendApp.
 
 Landing: `/captacion`. Thank-you: `/captacion/gracias`. Métricas: `/captacion/metricas`. Copy por componente. No inventar texto ni credenciales que no estén acá.
 

@@ -33,6 +33,7 @@ export default function LeadForm({
     const data = new FormData(form);
 
     try {
+      const eventId = `lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
       const response = await fetch("/api/captacion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -41,9 +42,14 @@ export default function LeadForm({
           website: data.get("website"),
           resource,
           angulo,
+          event_id: eventId,
         }),
       });
-      const result = (await response.json()) as { message?: string; simulado?: boolean };
+      const result = (await response.json()) as {
+        message?: string;
+        simulado?: boolean;
+        event_id?: string;
+      };
       if (!response.ok) throw new Error(result.message || "No pudimos enviar la guía.");
 
       if (typeof window !== "undefined") {
@@ -56,8 +62,11 @@ export default function LeadForm({
         });
         guardarEventos(eventos.slice(0, 50));
         captar("captacion_email", { angulo, simulado: Boolean(result.simulado) });
-        if (!result.simulado && "fbq" in window) {
-          (window as typeof window & { fbq: (...args: unknown[]) => void }).fbq("track", "Lead");
+        if (!result.simulado) {
+          const fbq = (window as typeof window & {
+            fbq?: (...args: unknown[]) => void;
+          }).fbq;
+          fbq?.("track", "Lead", {}, { eventID: result.event_id || eventId });
         }
       }
       setState("sent");

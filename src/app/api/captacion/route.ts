@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { enviarLeadMeta } from "@/lib/meta-capi";
+import { guardarLead, supabaseLeadsDisponible } from "@/lib/supabase-leads";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -7,6 +9,7 @@ type Cuerpo = {
   website?: unknown;
   resource?: unknown;
   angulo?: unknown;
+  event_id?: unknown;
   simular?: unknown;
 };
 
@@ -23,6 +26,7 @@ async function leerCuerpo(request: Request): Promise<{ datos: Cuerpo; viaFormula
         website: form.get("website"),
         resource: form.get("resource"),
         angulo: form.get("angulo"),
+        event_id: form.get("event_id"),
         simular: form.get("simular") === "true",
       },
       viaFormulario: true,
@@ -34,7 +38,7 @@ async function leerCuerpo(request: Request): Promise<{ datos: Cuerpo; viaFormula
 function responder(
   request: Request,
   viaFormulario: boolean,
-  cuerpo: { ok?: boolean; simulado?: boolean; message?: string },
+  cuerpo: { ok?: boolean; simulado?: boolean; event_id?: string; message?: string },
   status: number
 ) {
   if (viaFormulario) {
@@ -69,37 +73,39 @@ export async function POST(request: Request) {
     return responder(request, viaFormulario, { message: "Ingresa un email válido." }, 400);
   }
 
-  const webhookUrl = process.env.CAPTACION_WEBHOOK_URL;
-  const simular = datos.simular === true || !webhookUrl;
-  if (simular) {
+  const resource =
+    typeof datos.resource === "string" && datos.resource.trim()
+      ? datos.resource.trim().slice(0, 64)
+      : "7-decisiones";
+  const angulo = datos.angulo === "B" || datos.angulo === "C" ? datos.angulo : "A";
+  const eventId =
+    typeof datos.event_id === "string" && datos.event_id.trim()
+      ? datos.event_id.trim().slice(0, 80)
+      : `lead-${Date.now()}`;
+
+  if (datos.simular === true) {
+    return responder(request, viaFormulario, { ok: true, simulado: true }, 200);
+  }
+
+  if (!supabaseLeadsDisponible()) {
     return responder(request, viaFormulario, { ok: true, simulado: true }, 200);
   }
 
   try {
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(process.env.CAPTACION_WEBHOOK_TOKEN
-          ? { Authorization: `Bearer ${process.env.CAPTACION_WEBHOOK_TOKEN}` }
-          : {}),
-      },
-      body: JSON.stringify({
-        email,
-        resource:
-          typeof datos.resource === "string" && datos.resource.trim()
-            ? datos.resource.trim().slice(0, 64)
-            : "7-decisiones",
-        source: "landing-captacion",
-        angulo: datos.angulo === "B" || datos.angulo === "C" ? datos.angulo : "A",
-        createdAt: new Date().toISOString(),
-      }),
-      cache: "no-store",
+    await guardarLead({
+      email,
+      resource,
+      angulo,
+      source: "landing-captacion",
     });
-    if (!response.ok) throw new Error(`Webhook responded with ${response.status}`);
-    return responder(request, viaFormulario, { ok: true }, 200);
+    try {
+      await enviarLeadMeta({ request, email, eventId });
+    } catch (error) {
+      console.error("captacion meta capi error", error);
+    }
+    return responder(request, viaFormulario, { ok: true, event_id: eventId }, 200);
   } catch (error) {
-    console.error("captacion webhook error", error);
+    console.error("captacion supabase error", error);
     return responder(
       request,
       viaFormulario,
