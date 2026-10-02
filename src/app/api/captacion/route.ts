@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { enviarGuiaLead } from "@/lib/brevo";
 import { enviarLeadMeta } from "@/lib/meta-capi";
 import { guardarLead, supabaseLeadsDisponible } from "@/lib/supabase-leads";
 
@@ -98,6 +99,11 @@ export async function POST(request: Request) {
       angulo,
       source: "landing-captacion",
     });
+    try {
+      await enviarGuiaLead(email);
+    } catch (error) {
+      console.error("captacion brevo error", error);
+    }
     try {
       await enviarLeadMeta({ request, email, eventId });
     } catch (error) {

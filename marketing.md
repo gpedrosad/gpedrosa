@@ -261,3 +261,55 @@ Variables: `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` y `NEXT_PUBLIC_POSTHOG_HOST` (por
 | `captacion_kit` | cuando exista checkout | Producto consciente | Thank-you → Kit $27 |
 
 Filtrar `simulado = true` para no mezclar pruebas con tráfico real. El programa de $250 no tiene evento en este test.
+
+## 13. Correos (después de la guía)
+
+Al dejar el email, Brevo manda el correo 1 con la guía (`ansiosamente@gpedrosa.cl`). El segundo abre la decisión 2 (plata). WhatsApp: `https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20sobre%20prestar%20plata%20y%20quiero%20hablar.`
+
+### Correo 1 — La guía
+
+- Cuándo: al enviar el formulario
+- Asunto: Acá está tu guía: 7 decisiones
+- De: Gonzalo Pedrosa
+- Cuerpo:
+
+Hola,
+
+Pediste la guía para familiares de alguien que apuesta. Acá está:
+
+https://www.gpedrosa.cl/captacion/guia
+
+Son 7 decisiones y unos 15 minutos. No hace falta leerla de una. Empieza por la decisión que más te está costando ahora: si prestar, si creerle, o qué hacer si vuelve a pedir plata.
+
+La escribí yo. Si algo no te calza con lo que estás viviendo, responde este correo.
+
+Gonzalo Pedrosa
+Psicólogo · gpedrosa.cl
+
+Si no quieres más correos sobre este tema, respóndeme y te saco de la lista.
+
+### Correo 2 — Plata
+
+- Cuándo: un día después de la guía
+- Asunto: Antes de pasar plata otra vez
+- De: Gonzalo Pedrosa
+- Cuerpo:
+
+Hola,
+
+Si te vuelve a pedir plata, no tienes que responder en el momento.
+
+Antes de prestar, necesitas tres datos: para qué es, a nombre de quién está la deuda, y qué gasto tuyo queda sin pagar si no te la devuelven.
+
+El “por última vez” casi nunca es la última. Si la deuda queda a tu nombre, la pagas tú.
+
+Eso está en la decisión 2 de la guía:
+https://www.gpedrosa.cl/captacion/guia#decision-2
+
+Si esto te está pasando ahora y quieres hablarlo, escríbeme:
+https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20sobre%20prestar%20plata%20y%20quiero%20hablar.
+
+Gonzalo Pedrosa
+Psicólogo · gpedrosa.cl
+
+Si no quieres más correos sobre este tema, respóndeme y te saco de la lista.
