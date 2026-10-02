@@ -264,7 +264,7 @@ Filtrar `simulado = true` para no mezclar pruebas con tráfico real. El programa
 
 ## 13. Correos (después de la guía)
 
-Al dejar el email, Brevo manda el correo 1 con la guía (`ansiosamente@gpedrosa.cl`). El segundo abre la decisión 2 (plata). WhatsApp: `https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20sobre%20prestar%20plata%20y%20quiero%20hablar.`
+Al dejar el email, Brevo manda el correo 1 con la guía (`ansiosamente@gpedrosa.cl`). Después, un cron diario (`/api/captacion/secuencia`, 10:00 Chile) manda el 2 al día siguiente, el 3 a los 3 días y el 4 a los 5. Cada uno abre una decisión. WhatsApp al final de 2, 3 y 4.
 
 ### Correo 1 — La guía
 
@@ -308,6 +308,58 @@ https://www.gpedrosa.cl/captacion/guia#decision-2
 
 Si esto te está pasando ahora y quieres hablarlo, escríbeme:
 https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20sobre%20prestar%20plata%20y%20quiero%20hablar.
+
+Gonzalo Pedrosa
+Psicólogo · gpedrosa.cl
+
+Si no quieres más correos sobre este tema, respóndeme y te saco de la lista.
+
+### Correo 3 — Creerle
+
+- Cuándo: 3 días después de la guía
+- Asunto: Cuando promete que no va a volver a pasar
+- De: Gonzalo Pedrosa
+- Cuerpo:
+
+Hola,
+
+Después de varias mentiras, quieres creer y también dudas. No tienes que saber si la promesa es sincera para decidir qué harás tú.
+
+Fíjate en lo que hace, no solo en lo que dice: si pidió ayuda, si te cuenta antes de que lo descubras, si acepta que tengas dudas.
+
+Vivir entre creer y dudar desgasta. Cada cargo nuevo te devuelve al mismo lugar.
+
+Eso está en la decisión 4 de la guía:
+https://www.gpedrosa.cl/captacion/guia#decision-4
+
+Si esto te está pasando ahora, escríbeme:
+https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20sobre%20creerle%20y%20quiero%20hablar.
+
+Gonzalo Pedrosa
+Psicólogo · gpedrosa.cl
+
+Si no quieres más correos sobre este tema, respóndeme y te saco de la lista.
+
+### Correo 4 — Recaída
+
+- Cuándo: 5 días después de la guía
+- Asunto: Si vuelve a apostar
+- De: Gonzalo Pedrosa
+- Cuerpo:
+
+Hola,
+
+Que haya vuelto a apostar no significa que tú hayas fallado ni que debas pagar.
+
+Si reaccionas igual que la última vez, lo más probable es que pase lo mismo que la última vez.
+
+Primero mira si alguien corre peligro. Si estás a salvo, puedes tomarte tiempo. No tienes que decidir toda la relación en la misma hora.
+
+Eso está en la decisión 6 de la guía:
+https://www.gpedrosa.cl/captacion/guia#decision-6
+
+Si quieres hablarlo, escríbeme:
+https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20si%20vuelve%20a%20apostar%20y%20quiero%20hablar.
 
 Gonzalo Pedrosa
 Psicólogo · gpedrosa.cl

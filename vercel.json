@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/captacion/secuencia",
+      "schedule": "0 13 * * *"
+    }
+  ]
+}

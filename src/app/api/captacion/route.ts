@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { enviarGuiaLead } from "@/lib/brevo";
+import { enviarGuiaLead, guardarContactoLead } from "@/lib/brevo";
 import { enviarLeadMeta } from "@/lib/meta-capi";
-import { guardarLead, supabaseLeadsDisponible } from "@/lib/supabase-leads";
+import { guardarLead, marcarCorreoLead, supabaseLeadsDisponible } from "@/lib/supabase-leads";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -100,7 +100,13 @@ export async function POST(request: Request) {
       source: "landing-captacion",
     });
     try {
+      await guardarContactoLead(email);
+    } catch (error) {
+      console.error("captacion brevo contacto error", error);
+    }
+    try {
       await enviarGuiaLead(email);
+      await marcarCorreoLead(email, 1);
     } catch (error) {
       console.error("captacion brevo error", error);
     }
