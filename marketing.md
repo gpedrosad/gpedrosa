@@ -245,7 +245,9 @@ No se juzga un paso con el del siguiente. Si el ad no trae clics, no se toca la 
 
 4. **Email → thank-you.** Esperamos que quien dejó el email vea el Kit. Si el formulario no abre `/captacion/gracias`, es un fallo técnico, no de oferta.
 
-5. **Thank-you → Kit $27.** Aquí cambia el nivel de conciencia. Anda si el 3% o más de las vistas del Kit compra, y el CPA del Kit queda por debajo de $27 (el anuncio se paga). Menos de 1% con 80 vistas o más: el salto al producto no anda. No se habla del programa de $250 para tapar eso. Mientras no haya checkout, este paso no se puede declarar andando.
+5. **Secuencia de correos.** Se juzgan respuestas y clics, no aperturas: Gmail y otros clientes inflan el pixel. El 1 tiene un enlace a la guía (`utm_content=correo-1-guia`) y pide responder con un número. El 2 y el 3 no tienen enlace: piden una línea en el mismo correo. El 4 tiene un enlace a WhatsApp (`utm_content=correo-4-recaida`). Con 30 a 40 leads que ya recibieron los 4 correos, menos de 3 a 5 señales en total (respuestas + clics de guía o WhatsApp): el problema es el email (asunto, primera línea o el pedido), no el anuncio. Ahí se cambia el asunto y se deja un solo pedido.
+
+6. **Thank-you → Kit $27.** Aquí cambia el nivel de conciencia. Anda si el 3% o más de las vistas del Kit compra, y el CPA del Kit queda por debajo de $27 (el anuncio se paga). Menos de 1% con 80 vistas o más: el salto al producto no anda. No se habla del programa de $250 para tapar eso. Mientras no haya checkout, este paso no se puede declarar andando.
 
 ## 12. PostHog
 
@@ -264,12 +266,14 @@ Filtrar `simulado = true` para no mezclar pruebas con tráfico real. El programa
 
 ## 13. Correos (después de la guía)
 
-Al dejar el email, Brevo manda el correo 1 con la guía (`ansiosamente@gpedrosa.cl`). Después, un cron diario (`/api/captacion/secuencia`, 10:00 Chile) manda el 2 al día siguiente, el 3 a los 3 días y el 4 a los 5. Cada uno abre una decisión. WhatsApp al final de 2, 3 y 4.
+Al dejar el email, Brevo manda el correo 1 con la guía (`ansiosamente@gpedrosa.cl`). Después, un cron diario (`/api/captacion/secuencia`, 10:00 Chile) manda el 2 al día siguiente, el 3 a los 3 días y el 4 a los 5. El 1 tiene un enlace a la guía. El 2 y el 3 no tienen enlace: se responden en el mismo correo. El 4 pasa por `/captacion/wa` y de ahí a WhatsApp. Se juzgan respuestas y clics, no aperturas.
 
 ### Correo 1 — La guía
 
 - Cuándo: al enviar el formulario
 - Asunto: Acá está tu guía: 7 decisiones
+- Enlace: `https://www.gpedrosa.cl/captacion/guia?utm_source=brevo&utm_medium=email&utm_campaign=captacion-secuencia&utm_content=correo-1-guia`
+- Pedido: responde este correo con un número
 - De: Gonzalo Pedrosa
 - Cuerpo:
 
@@ -277,11 +281,11 @@ Hola,
 
 Pediste la guía para familiares de alguien que apuesta. Acá está:
 
-https://www.gpedrosa.cl/captacion/guia
+https://www.gpedrosa.cl/captacion/guia?utm_source=brevo&utm_medium=email&utm_campaign=captacion-secuencia&utm_content=correo-1-guia
 
-Son 7 decisiones y unos 15 minutos. No hace falta leerla de una. Empieza por la decisión que más te está costando ahora: si prestar, si creerle, o qué hacer si vuelve a pedir plata.
+Son 7 decisiones y unos 15 minutos. No hace falta leerla de una.
 
-La escribí yo. Si algo no te calza con lo que estás viviendo, responde este correo.
+Responde este correo con un número: 1 si te está costando prestar, 2 si creerle, o 3 si qué hacer si vuelve a pedir plata.
 
 Gonzalo Pedrosa
 Psicólogo · gpedrosa.cl
@@ -292,6 +296,8 @@ Si no quieres más correos sobre este tema, respóndeme y te saco de la lista.
 
 - Cuándo: un día después de la guía
 - Asunto: Antes de pasar plata otra vez
+- Enlace: ninguno
+- Pedido: responde este correo con una línea
 - De: Gonzalo Pedrosa
 - Cuerpo:
 
@@ -303,11 +309,7 @@ Antes de prestar, necesitas tres datos: para qué es, a nombre de quién está l
 
 El “por última vez” casi nunca es la última. Si la deuda queda a tu nombre, la pagas tú.
 
-Eso está en la decisión 2 de la guía:
-https://www.gpedrosa.cl/captacion/guia#decision-2
-
-Si esto te está pasando ahora y quieres hablarlo, escríbeme:
-https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20sobre%20prestar%20plata%20y%20quiero%20hablar.
+Si te pide plata esta semana, ¿qué vas a hacer? Responde este correo con una línea.
 
 Gonzalo Pedrosa
 Psicólogo · gpedrosa.cl
@@ -318,6 +320,8 @@ Si no quieres más correos sobre este tema, respóndeme y te saco de la lista.
 
 - Cuándo: 3 días después de la guía
 - Asunto: Cuando promete que no va a volver a pasar
+- Enlace: ninguno
+- Pedido: responde este correo con una línea
 - De: Gonzalo Pedrosa
 - Cuerpo:
 
@@ -329,11 +333,7 @@ Fíjate en lo que hace, no solo en lo que dice: si pidió ayuda, si te cuenta an
 
 Vivir entre creer y dudar desgasta. Cada cargo nuevo te devuelve al mismo lugar.
 
-Eso está en la decisión 4 de la guía:
-https://www.gpedrosa.cl/captacion/guia#decision-4
-
-Si esto te está pasando ahora, escríbeme:
-https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20sobre%20creerle%20y%20quiero%20hablar.
+La última vez que prometió que no iba a volver a pasar, ¿tú qué hiciste? Una línea.
 
 Gonzalo Pedrosa
 Psicólogo · gpedrosa.cl
@@ -344,6 +344,8 @@ Si no quieres más correos sobre este tema, respóndeme y te saco de la lista.
 
 - Cuándo: 5 días después de la guía
 - Asunto: Si vuelve a apostar
+- Enlace: `https://www.gpedrosa.cl/captacion/wa?utm_source=brevo&utm_medium=email&utm_campaign=captacion-secuencia&utm_content=correo-4-recaida`
+- Pedido: escríbeme tu situación por WhatsApp
 - De: Gonzalo Pedrosa
 - Cuerpo:
 
@@ -355,11 +357,8 @@ Si reaccionas igual que la última vez, lo más probable es que pase lo mismo qu
 
 Primero mira si alguien corre peligro. Si estás a salvo, puedes tomarte tiempo. No tienes que decidir toda la relación en la misma hora.
 
-Eso está en la decisión 6 de la guía:
-https://www.gpedrosa.cl/captacion/guia#decision-6
-
-Si quieres hablarlo, escríbeme:
-https://wa.me/56968257817?text=Hola%20Gonzalo%2C%20vengo%20del%20correo%20si%20vuelve%20a%20apostar%20y%20quiero%20hablar.
+Si quieres hablarlo, escríbeme tu situación:
+https://www.gpedrosa.cl/captacion/wa?utm_source=brevo&utm_medium=email&utm_campaign=captacion-secuencia&utm_content=correo-4-recaida
 
 Gonzalo Pedrosa
 Psicólogo · gpedrosa.cl

@@ -10,6 +10,9 @@ type Lead = {
 export type LeadSecuencia = {
   email: string;
   created_at: string;
+  resource: string | null;
+  angulo: string | null;
+  source: string | null;
   correo_1_at: string | null;
   correo_2_at: string | null;
   correo_3_at: string | null;
@@ -92,7 +95,7 @@ async function supabaseFetch(path: string, init: RequestInit) {
 
 export async function listarLeadsSecuencia(): Promise<LeadSecuencia[]> {
   const respuesta = await supabaseFetch(
-    "gpedrosa_leads?select=email,created_at,correo_1_at,correo_2_at,correo_3_at,correo_4_at&order=created_at.asc",
+    "gpedrosa_leads?select=email,created_at,resource,angulo,source,correo_1_at,correo_2_at,correo_3_at,correo_4_at&order=created_at.asc",
     { method: "GET" }
   );
   return (await respuesta.json()) as LeadSecuencia[];

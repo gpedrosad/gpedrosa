@@ -83,6 +83,20 @@ export default function MetricasPage() {
             </p>
           </div>
           <div className="mt-8">
+            <h3 className="text-base font-semibold">Secuencia de correos</h3>
+            <p className="mt-3 text-base leading-7 text-neutral-700">
+              Se juzgan respuestas y clics, no aperturas. Gmail y otros clientes inflan el
+              pixel. El 1 pide abrir la guía y responder con un número. El 2 y el 3 piden
+              una línea en el mismo correo. El 4 pide escribir la situación por WhatsApp.
+            </p>
+            <p className="mt-3 text-base leading-7 text-neutral-700">
+              Con 30 a 40 leads que ya recibieron los 4 correos, menos de 3 a 5 señales en
+              total (respuestas + clics de guía o WhatsApp): el problema es el email
+              (asunto, primera línea o el pedido), no el anuncio. Ahí se cambia el asunto
+              y se deja un solo pedido.
+            </p>
+          </div>
+          <div className="mt-8">
             <h3 className="text-base font-semibold">PostHog</h3>
             <p className="mt-3 text-base leading-7 text-neutral-700">
               El clic del anuncio se mira en Meta. En el sitio, PostHog registra el resto. No se

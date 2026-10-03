@@ -1,5 +1,4 @@
-const GUIA_URL = "https://www.gpedrosa.cl/captacion/guia";
-const WHATSAPP = "https://wa.me/56968257817";
+const SITIO = "https://www.gpedrosa.cl";
 
 const SENDER = {
   name: process.env.BREVO_SENDER_NAME || "Gonzalo Pedrosa",
@@ -7,6 +6,11 @@ const SENDER = {
 };
 
 export type CorreoCaptacion = 1 | 2 | 3 | 4;
+
+export const UTM_CORREO = {
+  1: "correo-1-guia",
+  4: "correo-4-recaida",
+} as const;
 
 type Plantilla = {
   asunto: string;
@@ -16,8 +20,21 @@ type Plantilla = {
   html: string;
 };
 
-function whatsapp(texto: string) {
-  return `${WHATSAPP}?text=${encodeURIComponent(texto)}`;
+function utm(content: string) {
+  return new URLSearchParams({
+    utm_source: "brevo",
+    utm_medium: "email",
+    utm_campaign: "captacion-secuencia",
+    utm_content: content,
+  }).toString();
+}
+
+function enlaceGuia() {
+  return `${SITIO}/captacion/guia?${utm(UTM_CORREO[1])}`;
+}
+
+function enlaceWhatsapp() {
+  return `${SITIO}/captacion/wa?${utm(UTM_CORREO[4])}`;
 }
 
 function pie() {
@@ -32,6 +49,9 @@ function pieHtml() {
 <p>Si no quieres más correos sobre este tema, respóndeme y te saco de la lista.</p>`;
 }
 
+const GUIA = enlaceGuia();
+const WA4 = enlaceWhatsapp();
+
 const PLANTILLAS: Record<CorreoCaptacion, Plantilla> = {
   1: {
     asunto: "Acá está tu guía: 7 decisiones",
@@ -41,18 +61,18 @@ const PLANTILLAS: Record<CorreoCaptacion, Plantilla> = {
 
 Pediste la guía para familiares de alguien que apuesta. Acá está:
 
-${GUIA_URL}
+${GUIA}
 
-Son 7 decisiones y unos 15 minutos. No hace falta leerla de una. Empieza por la decisión que más te está costando ahora: si prestar, si creerle, o qué hacer si vuelve a pedir plata.
+Son 7 decisiones y unos 15 minutos. No hace falta leerla de una.
 
-La escribí yo. Si algo no te calza con lo que estás viviendo, responde este correo.
+Responde este correo con un número: 1 si te está costando prestar, 2 si creerle, o 3 si qué hacer si vuelve a pedir plata.
 
 ${pie()}`,
     html: `<p>Hola,</p>
 <p>Pediste la guía para familiares de alguien que apuesta. Acá está:</p>
-<p><a href="${GUIA_URL}">${GUIA_URL}</a></p>
-<p>Son 7 decisiones y unos 15 minutos. No hace falta leerla de una. Empieza por la decisión que más te está costando ahora: si prestar, si creerle, o qué hacer si vuelve a pedir plata.</p>
-<p>La escribí yo. Si algo no te calza con lo que estás viviendo, responde este correo.</p>
+<p><a href="${GUIA}">${GUIA}</a></p>
+<p>Son 7 decisiones y unos 15 minutos. No hace falta leerla de una.</p>
+<p>Responde este correo con un número: 1 si te está costando prestar, 2 si creerle, o 3 si qué hacer si vuelve a pedir plata.</p>
 ${pieHtml()}`,
   },
   2: {
@@ -67,21 +87,14 @@ Antes de prestar, necesitas tres datos: para qué es, a nombre de quién está l
 
 El “por última vez” casi nunca es la última. Si la deuda queda a tu nombre, la pagas tú.
 
-Eso está en la decisión 2 de la guía:
-${GUIA_URL}#decision-2
-
-Si esto te está pasando ahora y quieres hablarlo, escríbeme:
-${whatsapp("Hola Gonzalo, vengo del correo sobre prestar plata y quiero hablar.")}
+Si te pide plata esta semana, ¿qué vas a hacer? Responde este correo con una línea.
 
 ${pie()}`,
     html: `<p>Hola,</p>
 <p>Si te vuelve a pedir plata, no tienes que responder en el momento.</p>
 <p>Antes de prestar, necesitas tres datos: para qué es, a nombre de quién está la deuda, y qué gasto tuyo queda sin pagar si no te la devuelven.</p>
 <p>El “por última vez” casi nunca es la última. Si la deuda queda a tu nombre, la pagas tú.</p>
-<p>Eso está en la decisión 2 de la guía:<br>
-<a href="${GUIA_URL}#decision-2">${GUIA_URL}#decision-2</a></p>
-<p>Si esto te está pasando ahora y quieres hablarlo, escríbeme:<br>
-<a href="${whatsapp("Hola Gonzalo, vengo del correo sobre prestar plata y quiero hablar.")}">Escribirme por WhatsApp</a></p>
+<p>Si te pide plata esta semana, ¿qué vas a hacer? Responde este correo con una línea.</p>
 ${pieHtml()}`,
   },
   3: {
@@ -96,21 +109,14 @@ Fíjate en lo que hace, no solo en lo que dice: si pidió ayuda, si te cuenta an
 
 Vivir entre creer y dudar desgasta. Cada cargo nuevo te devuelve al mismo lugar.
 
-Eso está en la decisión 4 de la guía:
-${GUIA_URL}#decision-4
-
-Si esto te está pasando ahora, escríbeme:
-${whatsapp("Hola Gonzalo, vengo del correo sobre creerle y quiero hablar.")}
+La última vez que prometió que no iba a volver a pasar, ¿tú qué hiciste? Una línea.
 
 ${pie()}`,
     html: `<p>Hola,</p>
 <p>Después de varias mentiras, quieres creer y también dudas. No tienes que saber si la promesa es sincera para decidir qué harás tú.</p>
 <p>Fíjate en lo que hace, no solo en lo que dice: si pidió ayuda, si te cuenta antes de que lo descubras, si acepta que tengas dudas.</p>
 <p>Vivir entre creer y dudar desgasta. Cada cargo nuevo te devuelve al mismo lugar.</p>
-<p>Eso está en la decisión 4 de la guía:<br>
-<a href="${GUIA_URL}#decision-4">${GUIA_URL}#decision-4</a></p>
-<p>Si esto te está pasando ahora, escríbeme:<br>
-<a href="${whatsapp("Hola Gonzalo, vengo del correo sobre creerle y quiero hablar.")}">Escribirme por WhatsApp</a></p>
+<p>La última vez que prometió que no iba a volver a pasar, ¿tú qué hiciste? Una línea.</p>
 ${pieHtml()}`,
   },
   4: {
@@ -125,21 +131,16 @@ Si reaccionas igual que la última vez, lo más probable es que pase lo mismo qu
 
 Primero mira si alguien corre peligro. Si estás a salvo, puedes tomarte tiempo. No tienes que decidir toda la relación en la misma hora.
 
-Eso está en la decisión 6 de la guía:
-${GUIA_URL}#decision-6
-
-Si quieres hablarlo, escríbeme:
-${whatsapp("Hola Gonzalo, vengo del correo si vuelve a apostar y quiero hablar.")}
+Si quieres hablarlo, escríbeme tu situación:
+${WA4}
 
 ${pie()}`,
     html: `<p>Hola,</p>
 <p>Que haya vuelto a apostar no significa que tú hayas fallado ni que debas pagar.</p>
 <p>Si reaccionas igual que la última vez, lo más probable es que pase lo mismo que la última vez.</p>
 <p>Primero mira si alguien corre peligro. Si estás a salvo, puedes tomarte tiempo. No tienes que decidir toda la relación en la misma hora.</p>
-<p>Eso está en la decisión 6 de la guía:<br>
-<a href="${GUIA_URL}#decision-6">${GUIA_URL}#decision-6</a></p>
-<p>Si quieres hablarlo, escríbeme:<br>
-<a href="${whatsapp("Hola Gonzalo, vengo del correo si vuelve a apostar y quiero hablar.")}">Escribirme por WhatsApp</a></p>
+<p>Si quieres hablarlo, escríbeme tu situación:<br>
+<a href="${WA4}">${WA4}</a></p>
 ${pieHtml()}`,
   },
 };
@@ -209,4 +210,67 @@ export async function enviarCorreoCaptacion(paso: CorreoCaptacion, email: string
 
 export async function enviarGuiaLead(email: string) {
   await enviarCorreoCaptacion(1, email);
+}
+
+export function listarPlantillasCaptacion() {
+  return ([1, 2, 3, 4] as CorreoCaptacion[]).map((paso) => {
+    const plantilla = PLANTILLAS[paso];
+    return {
+      paso,
+      asunto: plantilla.asunto,
+      tag: plantilla.tag,
+      texto: plantilla.texto,
+    };
+  });
+}
+
+export type EstadisticaBrevo = {
+  tag: string;
+  requests: number;
+  delivered: number;
+  clicks: number;
+  uniqueClicks: number;
+  opens: number;
+  uniqueOpens: number;
+  hardBounces: number;
+  softBounces: number;
+  unsubscribed: number;
+};
+
+function numero(valor: unknown) {
+  return typeof valor === "number" && Number.isFinite(valor) ? valor : 0;
+}
+
+function leerEstadistica(tag: string, crudo: Record<string, unknown> | null): EstadisticaBrevo {
+  return {
+    tag,
+    requests: numero(crudo?.requests),
+    delivered: numero(crudo?.delivered),
+    clicks: numero(crudo?.clicks),
+    uniqueClicks: numero(crudo?.uniqueClicks),
+    opens: numero(crudo?.opens),
+    uniqueOpens: numero(crudo?.uniqueOpens),
+    hardBounces: numero(crudo?.hardBounces),
+    softBounces: numero(crudo?.softBounces),
+    unsubscribed: numero(crudo?.unsubscribed),
+  };
+}
+
+export async function estadisticasBrevoCaptacion(desde: string, hasta: string) {
+  const tags = [
+    "captacion",
+    "correo-1-guia",
+    "correo-2-plata",
+    "correo-3-creerle",
+    "correo-4-recaida",
+  ];
+  const porTag: EstadisticaBrevo[] = [];
+  for (const tag of tags) {
+    const crudo = (await brevo(
+      `/smtp/statistics/aggregatedReport?startDate=${desde}&endDate=${hasta}&tag=${encodeURIComponent(tag)}`,
+      { method: "GET" }
+    )) as Record<string, unknown> | null;
+    porTag.push(leerEstadistica(tag, crudo));
+  }
+  return porTag;
 }
