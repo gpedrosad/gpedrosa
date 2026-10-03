@@ -4,6 +4,7 @@ import {
   listarPlantillasCaptacion,
   type EstadisticaBrevo,
 } from "@/lib/brevo";
+import { contextoComoTexto } from "@/lib/captacion-contexto";
 import {
   listarLeadsSecuencia,
   supabaseLeadsDisponible,
@@ -153,15 +154,7 @@ export function reporteComoTexto(reporte: ReporteCaptacion) {
   lineas.push(`Generado: ${reporte.generado} (Chile)`);
   lineas.push(`Ventana Brevo: ${reporte.desde} a ${reporte.hasta}`);
   lineas.push("");
-  lineas.push("COMO MEDIR");
-  lineas.push("Se juzgan clics y respuestas. No aperturas: Gmail infla el pixel.");
-  lineas.push("Correo 1: enlace a la guia + responder con 1, 2 o 3.");
-  lineas.push("Correo 2 y 3: sin enlace. Pedido: una linea en el mismo correo.");
-  lineas.push("Correo 4: enlace a WhatsApp. Pedido: escribir la situacion.");
-  lineas.push("Umbral: con 30 a 40 leads que ya recibieron los 4 correos, menos de 3 a 5 senales (respuestas + clics de guia o WhatsApp) = el problema es el email, no el anuncio.");
-  lineas.push("Landing: anda si el 20% o mas de los clics deja el email. Hoy no se toca.");
-  lineas.push("Respuestas de Gmail: no hay API. Hay que contarlas a mano.");
-  lineas.push("Kit $27: sin checkout. Programa $250: fuera de este test.");
+  lineas.push(contextoComoTexto());
   lineas.push("");
   lineas.push("LEADS");
   lineas.push(`Total: ${reporte.leads.total}`);
